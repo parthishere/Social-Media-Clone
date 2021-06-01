@@ -1,4 +1,3 @@
-from post.models import Post
 from django.db import models
 from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.utils.text import slugify
@@ -44,14 +43,70 @@ class UserProfileManager(models.Manager):
             created = True
         return obj, created
     
-    def get_liked_posts(request):
-        user = request.user
-        post_count = 0
+    def add_or_remove_follower(self, request, user=None):
         if user.is_authenticated:
-            qs = Post.objects.filter(likes=user)
-            for obj in qs:
-                post_count +=1
-            return qs, post_count
+            try:
+                user_obj = self.model.objects.get(user=user)
+            except Exception as e:
+                print(e)
+            if user_obj.exists():
+                if user in user_obj.follower.objects.all():
+                    user_obj.follower.remove(user_obj)
+                    user_obj.follower_count -= 1
+                    user_obj.save()
+                else:
+                    user_obj.followers.add(user_obj)
+                    user_obj.follower_count += 1
+                    user_obj.save()
+        return user_obj
+    
+    def return_followers(self, request):
+        user = request.user
+        if request.user.is_authenticated:
+            try:
+                user_obj = self.model.objects.get(user=user)
+            except Exception as e:
+                print(e)
+            return user_obj.followers.objects.all()
+        
+    
+    def add_or_remove_following(self, request, following_user=None):
+        user = request.user
+        try:
+            user_obj = self.model.objects.get(user=user)
+        except Exception as e:
+            print(e) 
+        if request.user.is_authenticated:
+            if user in following_user.followers.objects.all():
+                following_user.followers.remove(user)
+                following_user.followers_count -= 1
+                following_user.save()
+            else:
+                following_user.followers.add(user)
+                following_user.followers_count += 1
+                following_user.save()
+                # Requested User and/ me who just clicked follow button 
+        return following_user, user_obj
+                
+            
+        
+    def return_following(self, request):
+        following = []
+        qs = User.objects.filter(active=True)
+        user = request.user
+        try:
+            user_obj = self.model.objects.get(user=user)
+        except Exception as e:
+            print(e)
+        for obj in qs.followers.all():
+            if user_obj.user == obj:
+                following += obj
+                user_obj.following_count += 1
+                user_obj.save()
+        return following, user_obj
+    
+    
+    
         
 
                 
@@ -59,7 +114,7 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True)
     name = models.CharField(max_length=100)
     bio = models.TextField(max_length=100)
@@ -68,12 +123,13 @@ class UserProfile(models.Model):
     post_count = models.IntegerField(default=0)
     followers = models.ManyToManyField(User, verbose_name='followers', null=True, blank=True)
     followers_count = models.IntegerField(default=0)
+    following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
     skill = models.CharField(max_length=100, null=True, blank=True)
     topic = models.CharField(max_length=100, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
-    saved   = models.ManyToManyField(Post, blank=True, null=True)
+    active = models.BooleanField(default=True)
     
     class Meta():
         ordering = ['-id']
