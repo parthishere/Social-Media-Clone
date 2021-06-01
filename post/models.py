@@ -23,14 +23,21 @@ class PostManager(models.Manager):
 
 # Create your models here.
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_user')
     image = models.ImageField(upload_to='post/images')
-    likes = models.ForeignKey(User, verbose_name='liked_user', on_delete=models.CASCADE, null=True, blank=True)
+    likes = models.ForeignKey(User, related_name='liked_user', on_delete=models.CASCADE, null=True, blank=True)
     like_count = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    objects = PostManager()
     
     def __str__(self):
         return self.user.username
     
     class Meta():
         ordering = ['-id']
+        
+    def get_absolute_url(self):
+        #return reverse("model_detail", kwargs={"pk": self.pk})
+        pass
+    

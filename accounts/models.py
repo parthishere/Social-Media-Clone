@@ -7,6 +7,7 @@ from time import timezone
 from .utils import random_string_generator
 from django.contrib.auth.models import User
 from django.db.models.aggregates import Max
+from skills.models import Skill
 
 # Create your models here.
 def unique_slug_generator_for_user_profile(instance, new_slug=None):
@@ -116,12 +117,12 @@ class UserProfileManager(models.Manager):
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True)
-    name = models.CharField(max_length=100)
-    bio = models.TextField(max_length=100)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    bio = models.TextField(max_length=100, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
-    profile_img = models.ImageField(upload_to='/user/profiles',  blank=True, null=True)
+    profile_img = models.ImageField(upload_to='user/profiles',  blank=True, null=True)
     post_count = models.IntegerField(default=0)
-    followers = models.ManyToManyField(User, verbose_name='followers', null=True, blank=True)
+    followers = models.ManyToManyField(User, related_name='followers', blank=True)
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
@@ -130,6 +131,8 @@ class UserProfile(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
+    
+    objects = UserProfileManager()
     
     class Meta():
         ordering = ['-id']
@@ -160,13 +163,25 @@ class UserProfile(models.Model):
         for p in self.post:
             total_like += p.like
         return total_like
+    
+    def get_absolute_url(self):
+        #return reverse("model_detail", kwargs={"pk": self.pk})
+        pass
         
     
     
 def post_save_user_reciever(sender, created, instance, *args, **kwargs):
     if created:
         user = instance
-        UserProfile.object.get_or_create(user=user)
+        user_obj = UserProfile.objects.get_or_create(user=user)
+        
+        # if user_obj.skills:
+        #     list_of_skills = String(user_obj.skills)
+        #     for skill in list_of_skills:
+        #         if Skill.objects.filter(skill=skill):
+        #             pass
+        #         else:
+        #             Skill.objects.create(skill=skill)
         
 post_save.connect(post_save_user_reciever, sender=User)
 
@@ -175,6 +190,8 @@ def pre_save_user_profile_reciever(sender, instance, *arsgs, **kwargs):
         slug = unique_slug_generator_for_user_profile(instance)
         instance.slug = slug
         instance.created = True
+        
+pre_save.connect(pre_save_user_profile_reciever, sender=UserProfile)
 
         
         
