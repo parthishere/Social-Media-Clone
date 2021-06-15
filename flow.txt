@@ -1,0 +1,34 @@
+basicaly after login user redireced to amke its profile
+
+basic fuctions 
+
+user:
+    => see my profile | <get> | IsAuthenticated and IsOwnerOrReadOnly
+    => update my profile | <patch, put> | IsAuthenticated and IsOwnerOrReadOnly
+    => see my followers | <get> | IsAuthenticated and IsOwnerOrReadOnly
+    => see my following | <get> | IsAuthenticated
+    => see others profile | <get> | IsAuthenticated
+    => search list | <get> 
+    => follow user | <post> | IsAuthenticated
+    => unfolllow user | <post> | IsAuthenticated
+    => see others following | <get> | IsAuthenticated
+    => see others followers | <get> | IsAuthenticated
+    => delete my account | <get> | IsAuthenticated and IsOwnerOrReadOnly
+
+post:
+    => see all posts / serach posts
+    => retrive post
+    => add post
+    => edit post
+    => delete post
+    => comment on post
+    => like post
+    => see liked user on post
+    => unlike post
+    => see following users posts
+
+comment:
+    => see posts comments
+    => edit comment
+    => delete comment
+    => recomment // future
