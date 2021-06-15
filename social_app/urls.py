@@ -20,7 +20,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('allauth.urls')),
-    path('account/', include('accounts.urls', namespace='accounts')),
-    path('post/', include('post.urls', namespace='post')),
+    path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
+    # path('api/posts/', include('post.api.urls', namespace='post-api')),
+    # path('api/comments/', include('post.api.urls', namespace='post-api')),
+    # path('api/posts/', include('post.api.urls', namespace='post-api')),
 ]
 
