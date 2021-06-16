@@ -33,29 +33,23 @@ from skills.models import Skill
 class UserProfileManager(models.Manager):
     
     
-    def add_or_remove_follower(self, request, id=None):
+    def remove_follower(self, request, id=None):
         
         if request.user.is_authenticated:
             try:
                 requested_user_obj = self.model.objects.get(id=id)
             except Exception as e:
                 print(e)
-            if user_obj.exists():
-                if user in user_obj.follower.objects.all():
-                    user_obj.follower.remove(user_obj)
-                    user_obj.follower_count -= 1
-                    user_obj.save()
-                else:
-                    user_obj.followers.add(user_obj)
-                    user_obj.follower_count += 1
-                    user_obj.save()
-        return user_obj
+            if requested_user_obj.exists():
+                pass
+        return requested_user_obj
     
     
-    def add_or_remove_following(self, request, following_user=None):
+    def add_or_remove_to_following(self, request, id=None):
         user = request.user
+        added = False
         try:
-            user_obj = self.model.objects.get(user=user)
+            following_user = self.model.objects.get(id=id)
         except Exception as e:
             print(e) 
         if request.user.is_authenticated:
@@ -63,12 +57,14 @@ class UserProfileManager(models.Manager):
                 following_user.followers.remove(user)
                 following_user.followers_count -= 1
                 following_user.save()
+                added = False
             else:
                 following_user.followers.add(user)
                 following_user.followers_count += 1
                 following_user.save()
+                added = True
                 # Requested User and/ me who just clicked follow button 
-        return following_user, user_obj
+        return following_user, user, added
     
     
     def get_following_of_user(self, uuid):
