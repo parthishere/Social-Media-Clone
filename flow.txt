@@ -1,34 +1,36 @@
-basicaly after login user redireced to amke its profile
+basicaly after login user redireced to make its profile
 
 basic fuctions 
 
-user:
+users:
     => see my profile | <get> | IsAuthenticated and IsOwnerOrReadOnly
     => update my profile | <patch, put> | IsAuthenticated and IsOwnerOrReadOnly
-    => see my followers | <get> | IsAuthenticated and IsOwnerOrReadOnly
-    => see my following | <get> | IsAuthenticated
-    => see others profile | <get> | IsAuthenticated
-    => search list | <get> 
+    => update profile picture | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => delete profile picture | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => see my followers | <get> 
+    => see my following | <get>
+    => see others profile | <get> 
+    => search \ list | <get> 
     => follow user | <post> | IsAuthenticated
     => unfolllow user | <post> | IsAuthenticated
     => see others following | <get> | IsAuthenticated
     => see others followers | <get> | IsAuthenticated
     => delete my account | <get> | IsAuthenticated and IsOwnerOrReadOnly
 
-post:
-    => see all posts / serach posts
-    => retrive post
-    => add post
-    => edit post
-    => delete post
-    => comment on post
-    => like post
-    => see liked user on post
-    => unlike post
-    => see following users posts
+posts:
+    => see all posts / serach posts | <get> 
+    => retrive post | <get>
+    => add post | <post> | IsAuthenticated
+    => edit post | <patch, put> | IsAuthenticated and IsOwnerOrReadOnly
+    => delete post | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => comment on post | <post> | IsAuthenticated
+    => like post | <post> | IsAuthenticated
+    => see liked user on post | <post> | IsAuthenticated
+    => unlike post | <post> | IsAuthenticated
+    => see following users posts | <get> 
 
-comment:
-    => see posts comments
-    => edit comment
-    => delete comment
+comments:
+    => see posts comments | <get>
+    => edit comment | <post> | IsAuthenticated
+    => delete comment | <post> | IsAuthenticated and IsOwnerOrReadOnly
     => recomment // future

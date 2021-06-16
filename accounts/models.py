@@ -32,26 +32,12 @@ from skills.models import Skill
 
 class UserProfileManager(models.Manager):
     
-    def get_or_new(self, request):
-        obj = None
-        created = False
-        try: 
-            qs = self.model.objects.filter(user=request.user)
-        except Exception as e:
-            print(e)
-        if qs.count() == 1:
-            obj = qs.first()
-            created = False
-        else:
-            obj = self.model.objects.create(user=request.user)
-            created = True
-        return obj, created
     
-    
-    def add_or_remove_follower(self, request, user=None):
-        if user.is_authenticated:
+    def add_or_remove_follower(self, request, id=None):
+        
+        if request.user.is_authenticated:
             try:
-                user_obj = self.model.objects.get(user=user)
+                requested_user_obj = self.model.objects.get(id=id)
             except Exception as e:
                 print(e)
             if user_obj.exists():
@@ -102,7 +88,7 @@ class UserProfileManager(models.Manager):
 
 class UserProfile(models.Model):
     id = models.UUIDField(default=uuid.uuid4,  unique=True, primary_key=True, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
     name = models.CharField(max_length=100, blank=True, null=True)
     bio = models.TextField(max_length=100, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
@@ -117,6 +103,7 @@ class UserProfile(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
     active = models.BooleanField(default=True)  # we are gonna use it as archive account 
+    email_verified = models.BooleanField(default=False)
     
     objects = UserProfileManager()
     
