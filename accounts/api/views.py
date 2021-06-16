@@ -111,20 +111,28 @@ class UserProfileListAPI(generics.ListAPIView):
     def get_serializer_context(self, *args, **kwargs):
         return { "request":self.request }
     
+    
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def follow_requested_user(request, id):
     """ Here *id* is requested user's *id* """
     self_profile = request.user.user_profile
-    self_profile.follow_requested_user(id=id)
-
-
-@api_view(['GET',])
-def user_posts_api_view(request):
-    user = request.user
-    queryset = Post.objects.filter(user=user)
-    serializer = PostSerializer(queryset, many=True)
+    requested_user, user, added = self_profile.add_or_remove_to_following(id=id)
+    
+    serializer = UserProfileSerializer(self_profile, many=False)
     return Response(serializer.data)
 
-def get_self_profile(request) :
-    user = request.user.user_profile
+
+@api_view(['GET', ])
+@permission_classes([AllowAny])
+
+
+# @api_view(['GET',])
+# def user_posts_api_view(request):
+#     user = request.user
+#     queryset = Post.objects.filter(user=user)
+#     serializer = PostSerializer(queryset, many=True)
+#     return Response(serializer.data)
+
+# def get_self_profile(request) :
+#     user = request.user.user_profile
