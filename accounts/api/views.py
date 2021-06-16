@@ -25,7 +25,7 @@ def get_self_profile(request):
     
     
 class UpdateSelfProfile(APIView):
-    queryset = UserProfile.objects.all(active=True)
+    queryset = UserProfile.objects.filter(active=True)
     serializer_class = UserProfileSerializer
     permission_classes = [IsOwnerOrReadOnly,]
     
@@ -51,7 +51,7 @@ class UpdateSelfProfile(APIView):
             return Response(response, status=401)
         
 class ImageUpdateAPIView(APIView):
-    queryset = UserProfile.objects.all(active=True)
+    queryset = UserProfile.objects.filter(active=True)
     serializer_class = UserProfileSerializer
     permission_classes = [IsOwnerOrReadOnly,]
     
@@ -97,17 +97,19 @@ def get_self_following(request):
 @api_view(['GET',])
 @permission_classes([AllowAny])
 def retrive_profile(request, id):
-    user_profile = get_object_or_404(UserProfile)
+    user_profile = get_object_or_404(UserProfile, id=id, active=True)
     serializer = UserProfileSerializer(user_profile, many=False)
     return Response(serializer.data)
 
+
 class UserProfileListAPI(generics.ListAPIView):
     queryset = UserProfile.objects.all()
-    serializer_class = [UserProfileSerializer]
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny,]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['user__username', 'user__first_name', 'bio', 'name', 'following__user__username__in']
+    search_fields = ['user__username', 'user__first_name', 'bio', 'name']
     ordering_fields = '__all__'
-    
+
     def get_serializer_context(self, *args, **kwargs):
         return { "request":self.request }
     
@@ -125,7 +127,40 @@ def follow_requested_user(request, id):
 
 @api_view(['GET', ])
 @permission_classes([AllowAny])
+def get_requested_user_following(request, id=None):
+    """ using Reverse Queryset """
+    requested_user = UserProfile.objects.get(id=id, active=True).user
+    if requested_user is not None:
+        following = requested_user.following
+        serializer = UserProfileSerializer(following, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)
+  
+  
+@api_view(['GET', ])
+@permission_classes([AllowAny])
+def get_requested_user_followers(request, id=None):
+    requested_user_profile = UserProfile.objects.get(id=id, active=True)
+    if requested_user_profile is not None:
+        followers = requested_user_profile.followers
+        serializer = UserProfileSerializer(followers, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['POST'])
+@permission_classes([IsOwnerOrReadOnly])
+def delete_my_account(request):
+    user = request.user
+    user_profile = request.user.user_profile
+    
+    user_profile.delete()
+    user.delete()
+    return Response({'detail':'Account Deleted Successfully'}, status=status.HTTP_200_OK)
 
+
+    
 
 # @api_view(['GET',])
 # def user_posts_api_view(request):

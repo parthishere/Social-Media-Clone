@@ -16,6 +16,8 @@ users:
     => see others following | <get> | IsAuthenticated
     => see others followers | <get> | IsAuthenticated
     => delete my account | <get> | IsAuthenticated and IsOwnerOrReadOnly
+    => recommended users | <get> | IsAuthenticated
+    => email verification | <post>
 
 posts:
     => see all posts / serach posts | <get> 

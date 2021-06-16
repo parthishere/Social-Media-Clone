@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.shortcuts import reverse, redirect
 from time import timezone
 import uuid
+from rest_framework.reverse import reverse as api_reverse
 
 from .utils import random_string_generator
 from django.contrib.auth.models import User
@@ -112,12 +113,12 @@ class UserProfile(models.Model):
     
     class Meta():
         ordering = ['-id']
+        
+    def __unicode__(self):
+        return self.id
     
     def __str__(self):
-        return self.user.username
-    
-    def get_absolute_url(self):
-        return reverse("model_detail", kwargs={"slug": self.slug})
+        return self.user.username + " | " + str(self.id)
     
     # def check_verified(self):
     #     if self.user.is_authenticated and self.follower_count >= 100 and self.total_likes > 1000:
@@ -155,8 +156,8 @@ class UserProfile(models.Model):
         liked_posts = self.user.liked_user
         return liked_posts
     
-    def get_absolute_url(self):
-        return reverse("model_detail", kwargs={"id": self.id})
+    def get_api_url(self, request=None):
+        return api_reverse('account-api:profile-detail', kwargs={"id": self.id}, request=request)
         
     
     
