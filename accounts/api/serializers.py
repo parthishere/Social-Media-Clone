@@ -13,7 +13,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_field = ['url', 'id', 'user', 'timestamp',
                            'post_count', 'following_count', 'verified', 'active']
     
-    def get_following(self.obj):
+    def get_following(self, obj):
         return self.context.get('request').user.following
     
     def get_url(self, obj):
