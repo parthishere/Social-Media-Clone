@@ -8,7 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from rest_framework import filters
-from accounts.api.serializers import UserProfileSerializer
+from accounts.api.serializers import UserProfileSerializer, UserSerilizer
 from accounts.models import UserProfile, User
 
 from .permissions import IsOwnerOrReadOnly
@@ -80,8 +80,8 @@ def delete_self_profile_img(request):
 @permission_classes([IsOwnerOrReadOnly,]) 
 def get_self_followers(request):
     user_profile = request.user.user_profile
-    followers = user_profile.followers
-    serializer = UserProfileSerializer(followers, many=True)
+    followers = user_profile.followers.all()
+    serializer = UserSerilizer(followers, many=True)
     return Response(serializer.data)
 
 
@@ -144,7 +144,7 @@ def get_requested_user_followers(request, id=None):
     requested_user_profile = UserProfile.objects.get(id=id, active=True)
     if requested_user_profile is not None:
         followers = requested_user_profile.followers
-        serializer = UserProfileSerializer(followers, many=True)
+        serializer = UserSerilizer(followers, many=True)
         return Response(serializer.data)
     else:
         return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)

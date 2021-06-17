@@ -1,13 +1,14 @@
 from rest_framework import serializers
 
-from accounts.models import UserProfile, User
+from accounts.models import UserProfile
+from django.contrib.auth.models import User
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerilizer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name']
-
-
+        fields = '__all__'
+        
+        
 class UserProfileSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
     following = serializers.SerializerMethodField()
@@ -24,8 +25,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_following(self, obj):
         user = obj.user
-        following = user.following.all().values("user")
-        return UserSerializer(following,many=True).data
+        # following = user.following.all().values("user")
+        following = user.following.all()
+        return UserProfileSerializer(following,many=True).data
     
     def get_url(self, obj):
         return obj.get_api_url(request=self.context.get('request'))
