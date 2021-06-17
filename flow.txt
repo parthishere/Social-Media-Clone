@@ -20,6 +20,7 @@ users:
     => email verification | <post>
 
 posts:
+    => self Posts | <get> | IsAuthenticated and IsOwnerOrReadOnly
     => see all posts / serach posts | <get> 
     //# => retrive post | <get>
     => add post | <post> | IsAuthenticated
