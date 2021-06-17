@@ -21,17 +21,17 @@ users:
 
 posts:
     => see all posts / serach posts | <get> 
-    => retrive post | <get>
+    //# => retrive post | <get>
     => add post | <post> | IsAuthenticated
     => edit post | <patch, put> | IsAuthenticated and IsOwnerOrReadOnly
     => delete post | <post> | IsAuthenticated and IsOwnerOrReadOnly
-    => comment on post | <post> | IsAuthenticated
     => like post | <post> | IsAuthenticated
     => see liked user on post | <post> | IsAuthenticated
     => unlike post | <post> | IsAuthenticated
     => see following users posts | <get> 
 
 comments:
+    => comment on post | <post> | IsAuthenticated
     => see posts comments | <get>
     => edit comment | <post> | IsAuthenticated
     => delete comment | <post> | IsAuthenticated and IsOwnerOrReadOnly

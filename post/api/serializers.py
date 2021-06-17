@@ -7,5 +7,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
         
-    
+    def create(self, validated_data):
+        post = super(PostSerializer, self).create(validated_data)
+        post.user = self.context.get('request').user
+        post.save()
+        return post
         

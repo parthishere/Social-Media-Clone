@@ -26,6 +26,7 @@ class PostManager(models.Manager):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_user')
     image = models.ImageField(upload_to='post/images')
+    caption = models.TextField(default='feeling good ✔🎶')
     likes = models.ForeignKey(User, related_name='liked_user', on_delete=models.CASCADE, null=True, blank=True)
     like_count = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
