@@ -37,3 +37,8 @@ comments:
     => edit comment | <post> | IsAuthenticated
     => delete comment | <post> | IsAuthenticated and IsOwnerOrReadOnly
     => recomment // future
+
+feed:
+    => See recommended posts | <get> | IsAuthenticated
+    => See following users posts | <get> | IsAuthenticated
+    => See top posts | <get> | AllowAny
