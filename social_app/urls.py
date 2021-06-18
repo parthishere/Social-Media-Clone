@@ -16,13 +16,32 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework.schemas import get_schema_view
+from rest_framework.documentation import include_docs_urls
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
     path('api/posts/', include('post.api.urls', namespace='post-api')),
-    # path('api/comments/', include('post.api.urls', namespace='post-api')),
-    # path('api/posts/', include('post.api.urls', namespace='post-api')),
+    path('api/comments/', include('comments.api.urls', namespace='comment-api')),
+    path('schema/', get_schema_view(
+        title="MumbleAPI",
+        description="API for the Social-Clone.dev",
+        version="1.0.0"
+    ), name="social-schema"),
+    path('', include_docs_urls(
+        title="SocialClone",
+        description="API for the Social-Clone.dev",
+    ), name="social-docs")
+    # path('api/feed/', include('feed.api.urls', namespace='feed-api')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 

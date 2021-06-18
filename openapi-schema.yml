@@ -1,0 +1,39 @@
+info:
+  description: ''
+  title: ''
+  version: ''
+openapi: 3.0.0
+paths:
+  /api/users/:
+    get:
+      operationId: users_list
+      parameters:
+      - in: query
+        name: search
+        schema:
+          description: A search term.
+          title: Search
+          type: string
+      - in: query
+        name: ordering
+        schema:
+          description: Which field to use when ordering the results.
+          title: Ordering
+          type: string
+      tags:
+      - users
+  /api/users/{id}/:
+    get:
+      operationId: users_read
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - users
+servers:
+- url: ''

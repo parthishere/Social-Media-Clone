@@ -7,6 +7,7 @@ from post.models import Post
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_post')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     likes = models.ForeignKey(User, related_name='comment_liked_user', on_delete=models.CASCADE, null=True, blank=True)
     like_count = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -17,6 +18,4 @@ class Comment(models.Model):
     class Meta():
         ordering = ['-id']
         
-    def get_absolute_url(self):
-        #return reverse("model_detail", kwargs={"pk": self.pk})
-        pass
+    
