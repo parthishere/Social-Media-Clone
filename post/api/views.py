@@ -44,14 +44,14 @@ class UpdatePost(generics.UpdateAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
     parser_classes = [parsers.FileUploadParser]
-    lookup_field = ['id']
+    lookup_field = ['pk']
     
   
 class DeletePost(generics.DestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
-    lookup_field = ['id']
+    lookup_field = ['pk']
     
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

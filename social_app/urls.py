@@ -21,7 +21,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
-    # path('api/posts/', include('post.api.urls', namespace='post-api')),
+    path('api/posts/', include('post.api.urls', namespace='post-api')),
     # path('api/comments/', include('post.api.urls', namespace='post-api')),
     # path('api/posts/', include('post.api.urls', namespace='post-api')),
 ]
