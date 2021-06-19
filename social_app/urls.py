@@ -25,6 +25,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('django-rest-allauth/', include('django_rest_allauth.api.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
     path('api/posts/', include('post.api.urls', namespace='post-api')),
