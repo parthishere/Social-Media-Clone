@@ -18,6 +18,7 @@ users:
     => delete my account | <get> | IsAuthenticated and IsOwnerOrReadOnly
     => recommended users | <get> | IsAuthenticated
     => email verification | <post>
+    => verify my account | <post> | IsAuthenticated
 
 posts:
     => self Posts | <get> | IsAuthenticated and IsOwnerOrReadOnly
@@ -30,6 +31,8 @@ posts:
     => see liked user on post | <post> | IsAuthenticated
     => unlike post | <post> | IsAuthenticated
     => see following users posts | <get> 
+    => save post | <post> | IsAuthenticated
+    => share post
 
 comments:
     => comment on post | <post> | IsAuthenticated
@@ -42,3 +45,15 @@ feed:
     => See recommended posts | <get> | IsAuthenticated
     => See following users posts | <get> | IsAuthenticated
     => See top posts | <get> | AllowAny
+    => see following users post | <get> | IsAuthenticated
+
+Notification:
+    => See All Notifications | <get> | IsAdminUser
+    => Read Perticular Notification | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => Make notification with signals
+
+Other Features:
+    => chat with following user // Huge one!
+    => Tag User // Huge 
+    => Share Post in chat
+
