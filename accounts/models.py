@@ -105,7 +105,7 @@ class UserProfile(models.Model):
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
-    interest = models.CharField(max_length=100, null=True, blank=True)
+    interest = models.CharField(max_length=100, blank=True)
     topic = models.ManyToManyField(TopicTag, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
