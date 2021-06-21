@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
 from rest_framework import status
 from django.shortcuts import get_object_or_404, get_list_or_404
+from time import timezone
 
 from rest_framework import filters
 from accounts.api.serializers import UserProfileSerializer, UserSerilizer
@@ -174,28 +175,80 @@ def update_interests(request):
  
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def save_post(request):
-    pass
+def save_post(request, pk=None):
+    post = get_object_or_404(Post, pk=pk)
+    data = {}
+    user_profile = request.user.user_profile
+    if post in user_profile.saved_posts.all():
+        user_profile.saved_posts.remove(post)
+        data['data'] = 'post removed from saved'
+    else:
+        user_profile.saved_posts.add(post)
+        data['data'] = 'post added to saved'
+        
+    user_profile.save()
+    
+    return Response(data)
+    
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def verify_ccount(request):
-    pass
+def verify_account(request):
+    user = request.user
+    user_profile = user.user_profile
+    if user.is_authenticated and user_profile.follower_count >= 100:
+        if user.post_user.count > 10 and (user_profile.timestamp[:4]-timezone.now()[:4]) >= 3:
+            for post in user.post_user:
+                post_like_count = post.likes.count()
+            if post_like_count >= 1000:
+                user_profile.verified = True
+                user_profile.save()
+            return Response({"data": "verified"})
+    else:
+        return Response({"data":"Not verified"})
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def recommended_user(request):
-    pass
-      
-
-# @api_view(['GET',])
-# def user_posts_api_view(request):
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def recommended_user(request):
+#     pass
+   
+   
+# @api_view(['POST'])
+# @permission_classes((IsAuthenticated,))
+# def send_activation_email(request):
 #     user = request.user
-#     queryset = Post.objects.filter(user=user)
-#     serializer = PostSerializer(queryset, many=True)
-#     return Response(serializer.data)
-
-# def get_self_profile(request) :
-#     user = request.user.user_profile
+#     user_profile = UserProfile.objects.get(user=user)
+#     try:
+#         mail_subject = 'Verify your account.'
+#         message = render_to_string('verify-email.html', {
+#             'user': user_profile,
+#             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+#             'token': default_token_generator.make_token(user),
+#         })
+#         to_email = user.email
+#         email = EmailMessage(
+#             mail_subject, message, to=[to_email]
+#         )
+#         email.send()
+#         return Response('Mail sent Successfully',status=status.HTTP_200_OK)
+#     except Exception as e:
+#         return Response({'detail':f'{e}'},status=status.HTTP_403_FORBIDDEN)
+    
+       
+      
+# @api_view(['GET'])
+# def activate(request, uidb64, token):
+#     try:
+#         uid = urlsafe_base64_decode(uidb64).decode()
+#         user = User._default_manager.get(pk=uid)
+#     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+#     if user is not None and default_token_generator.check_token(user, token):
+#         user_profile = UserProfile.objects.get(user=user)
+#         user_profile.email_verified = True
+#         user_profile.save()
+#         return Response("Email Verified")
+#     else:
+#         return Response('Something went wrong , please try again',status=status.HTTP_406_NOT_ACCEPTABLE)

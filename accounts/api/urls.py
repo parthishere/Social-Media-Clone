@@ -13,6 +13,9 @@ from .views import (
     get_requested_user_followers,
     get_requested_user_following,
     delete_my_account,
+    update_interests,
+    save_post,
+    verify_account,
 
 )
 
@@ -31,6 +34,9 @@ urlpatterns = [
     path('user-followers/<id>/', get_requested_user_followers, name='user-followers'),
     path('user-following/<id>/', get_requested_user_following, name='user-following'),
     path('delete-profile/', delete_my_account, name='delete-profile'),
+    path('intrests/update', update_interests, name='update-intrest'),
+    path('save/<int:pk>', save_post, name='save-post'),
+    path('verify/', verify_account, name='verify-account'),
     # path('/', ProfileListAPIView.as_view(), name='profile_list'),
     # path('list/', ProfileListAPIView.as_view(), name='profile_list'),
 ]

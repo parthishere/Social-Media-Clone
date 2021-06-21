@@ -9,6 +9,7 @@ from .views import (
     like_unlike_post,
     see_all_liked_user,
     self_posts,
+    user_posts,
 )
 
 app_name = 'post-api'
@@ -21,4 +22,5 @@ urlpatterns = [
     path('like/<pk>', like_unlike_post, name='like-post'),
     path('likes/list/<pk>', see_all_liked_user, name='likes-list'),
     path('list/your-posts', self_posts, name='your-posts'),
+    path('user/<id>/', user_posts, name='user-post')
 ]
