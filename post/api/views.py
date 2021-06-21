@@ -90,9 +90,16 @@ def self_posts(request):
     return Response(PostSerializer(posts, many=True).data)
 
 
-def see_following_user_post(request, id=None):
+def see_following_users_post(request, id=None): # feed
     pass
 
+
+@api_view(['GET'])
+def user_posts(request, id=None):
+    user_profile = UserProfile.objects.get(id=id) 
+    posts = user_profile.user.post_user or None
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
         
     
     

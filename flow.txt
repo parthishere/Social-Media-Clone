@@ -19,9 +19,11 @@ users:
     => recommended users | <get> | IsAuthenticated
     => email verification | <post>
     => verify my account | <post> | IsAuthenticated
-
+    => add skills or intrests | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    
 posts:
     => self Posts | <get> | IsAuthenticated and IsOwnerOrReadOnly
+    => see users post | <get> 
     => see all posts / serach posts | <get> 
     //# => retrive post | <get>
     => add post | <post> | IsAuthenticated
@@ -36,7 +38,7 @@ posts:
 
 comments:
     => comment on post | <post> | IsAuthenticated
-    => see posts comments | <get>
+    => see post's comments | <get>
     => edit comment | <post> | IsAuthenticated
     => delete comment | <post> | IsAuthenticated and IsOwnerOrReadOnly
     => recomment // future

@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import Http404
 from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.utils.text import slugify
 from django.shortcuts import reverse, redirect
@@ -10,6 +11,7 @@ from .utils import random_string_generator
 from django.contrib.auth.models import User
 from django.db.models.aggregates import Max
 from skills.models import Skill
+import post.models
 
 # Create your models here.
 # def unique_slug_generator_for_user_profile(instance, new_slug=None):
@@ -28,6 +30,12 @@ from skills.models import Skill
 #                 )
 #         return unique_slug_generator_for_user_profile(instance, new_slug=new_slug)
 #     return slug
+
+class TopicTag(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
 
 
 
@@ -54,6 +62,8 @@ class UserProfileManager(models.Manager):
         except Exception as e:
             print(e) 
         if request.user.is_authenticated:
+            if request.user == following_user.user:
+                raise Http404('You cant folllow you!')
             if user in following_user.followers.objects.all():
                 following_user.followers.remove(user)
                 following_user.followers_count -= 1
@@ -95,12 +105,13 @@ class UserProfile(models.Model):
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
-    skill = models.CharField(max_length=100, null=True, blank=True)
-    topic = models.CharField(max_length=100, null=True, blank=True)
+    interest = models.CharField(max_length=100, null=True, blank=True)
+    topic = models.ManyToManyField(TopicTag, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
     active = models.BooleanField(default=True)  # we are gonna use it as archive account 
     email_verified = models.BooleanField(default=False)
+    saved_posts = models.ManyToManyField('post.Post')
     
     objects = UserProfileManager()
     

@@ -21,5 +21,4 @@ urlpatterns = [
     path('like/<pk>', like_unlike_post, name='like-post'),
     path('likes/list/<pk>', see_all_liked_user, name='likes-list'),
     path('list/your-posts', self_posts, name='your-posts'),
-   
 ]

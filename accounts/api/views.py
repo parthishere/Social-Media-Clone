@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 from rest_framework import filters
 from accounts.api.serializers import UserProfileSerializer, UserSerilizer
-from accounts.models import UserProfile, User
+from accounts.models import UserProfile, User, TopicTag
 
 from .permissions import IsOwnerOrReadOnly
 from post.models import Post
@@ -160,7 +160,35 @@ def delete_my_account(request):
     return Response({'detail':'Account Deleted Successfully'}, status=status.HTTP_200_OK)
 
 
-    
+@api_view(['PATCH'])
+@permission_classes((IsOwnerOrReadOnly))
+def update_interests(request): 
+    user_profile = request.user.userprofile
+    interests = request.data
+    user_profile.interests.set(
+        TopicTag.objects.get_or_create(name=interest['name'])[0] for interest in interests
+    )
+    user_profile.save()
+    serializer = UserProfileSerializer(user_profile, many=False)
+    return Response(serializer.data)
+ 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_post(request):
+    pass
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def verify_ccount(request):
+    pass
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommended_user(request):
+    pass
+      
 
 # @api_view(['GET',])
 # def user_posts_api_view(request):
