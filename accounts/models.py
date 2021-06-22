@@ -10,7 +10,6 @@ from rest_framework.reverse import reverse as api_reverse
 from .utils import random_string_generator
 from django.contrib.auth.models import User
 from django.db.models.aggregates import Max
-from skills.models import Skill
 import post.models
 
 # Create your models here.

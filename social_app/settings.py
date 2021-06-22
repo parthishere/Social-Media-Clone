@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'accounts',
     'post',
     'comments',
-    'skills',
+    'notification',
     
 ]
 SITE_ID = 1
