@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
 from rest_framework import status
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404, Http404
 from time import timezone
 
 from rest_framework import filters
@@ -33,8 +33,8 @@ class UpdateSelfProfile(APIView):
     def patch(self, *args, **kwargs):
         user_profile = self.request.user.user_profile
         serializer = self.serializer_class(user_profile, data=self.request.data, partial=True)
-        if serializer.is_valid:
-            user = serializer.save().user
+        if serializer.is_valid():
+            user = serializer.save()
             response = {'success': True, 'message': 'successfully updated your info',
                         'user': UserProfileSerializer(user).data}
             
@@ -61,7 +61,7 @@ class ImageUpdateAPIView(APIView):
  
  
  
-@api_view(['POST',])
+@api_view(['PATCH',])
 @permission_classes([IsOwnerOrReadOnly,])      
 def delete_self_profile_img(request):
     user_profile = request.user.user_profile
@@ -97,8 +97,8 @@ def get_self_following(request):
 
 @api_view(['GET',])
 @permission_classes([AllowAny])
-def retrive_profile(request, id):
-    user_profile = get_object_or_404(UserProfile, id=id, active=True)
+def retrive_profile(request, username=None):
+    user_profile = get_object_or_404(UserProfile, user__username=username, active=True)
     serializer = UserProfileSerializer(user_profile, many=False)
     return Response(serializer.data)
 
@@ -108,7 +108,7 @@ class UserProfileListAPI(generics.ListAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [AllowAny,]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['user__username', 'user__first_name', 'bio', 'name']
+    search_fields = ['user__username', 'user__first_name', 'bio', 'name', 'intrest']
     ordering_fields = '__all__'
 
     def get_serializer_context(self, *args, **kwargs):
@@ -117,10 +117,49 @@ class UserProfileListAPI(generics.ListAPIView):
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def follow_requested_user(request, id):
-    """ Here *id* is requested user's *id* """
+def follow_requested_user(request, username=None):
+    """ Here *username* is requested user's *username* """
+    
+    user = request.user
     self_profile = request.user.user_profile
-    requested_user, user, added = self_profile.add_or_remove_to_following(id=id)
+    try:
+        user_to_follow_profile = UserProfile.objects.get(user__username=username)
+    except Exception as e:
+        print(e) 
+    if request.user.is_authenticated:
+        if request.user == user_to_follow_profile.user:
+            raise Http404('You cant folllow you!')
+        if user in user_to_follow_profile.followers.all():
+            user_to_follow_profile.followers.remove(user)
+            user_to_follow_profile.followers_count -= 1
+            user_to_follow_profile.save()
+            added = False
+        else:
+            user_to_follow_profile.followers.add(user)
+            user_to_follow_profile.followers_count += 1
+            user_to_follow_profile.save()
+            added = True
+    
+    
+    serializer = UserProfileSerializer(self_profile, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsOwnerOrReadOnly])
+def remove_user_from_followers(request, username=None):
+    """ Here *username* is requested user's *username* """
+    self_profile = request.user.user_profile
+    user = request.user
+    user_profile = user.user_profile
+    
+    requested_user = get_object_or_404(User, username=username)
+    if request.user.is_authenticated:
+        
+        if requested_user in user_profile.followers.all():
+            user_profile.followers.remove(requested_user)
+            user_profile.save()
+
     
     serializer = UserProfileSerializer(self_profile, many=False)
     return Response(serializer.data)
@@ -128,9 +167,9 @@ def follow_requested_user(request, id):
 
 @api_view(['GET', ])
 @permission_classes([AllowAny])
-def get_requested_user_following(request, id=None):
+def get_requested_user_following(request, username=None):
     """ using Reverse Queryset """
-    requested_user = UserProfile.objects.get(id=id, active=True).user
+    requested_user = UserProfile.objects.get(user__username=username, active=True).user
     if requested_user is not None:
         following = requested_user.following
         serializer = UserProfileSerializer(following, many=True)
@@ -141,8 +180,8 @@ def get_requested_user_following(request, id=None):
   
 @api_view(['GET', ])
 @permission_classes([AllowAny])
-def get_requested_user_followers(request, id=None):
-    requested_user_profile = UserProfile.objects.get(id=id, active=True)
+def get_requested_user_followers(request, username=None):
+    requested_user_profile = UserProfile.objects.get(user__username=username, active=True)
     if requested_user_profile is not None:
         followers = requested_user_profile.followers
         serializer = UserSerilizer(followers, many=True)
@@ -172,41 +211,34 @@ def update_interests(request):
     user_profile.save()
     serializer = UserProfileSerializer(user_profile, many=False)
     return Response(serializer.data)
- 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def save_post(request, pk=None):
-    post = get_object_or_404(Post, pk=pk)
-    data = {}
-    user_profile = request.user.user_profile
-    if post in user_profile.saved_posts.all():
-        user_profile.saved_posts.remove(post)
-        data['data'] = 'post removed from saved'
-    else:
-        user_profile.saved_posts.add(post)
-        data['data'] = 'post added to saved'
-        
-    user_profile.save()
-    
-    return Response(data)
-    
+     
 
+# class VerifyAccount(APIView):
+    # serializer_class = UserProfile
+    # permission_classes = [IsOwnerOrReadOnly]
+    # queryset = UserProfile.objects.all()
+    
+    # def patch(self, *args, **kwargs):
+    #     data = self.request.data
+    #     user_profile =  self.request.user.user_profile
+    #     # serializer = self.serializer_class(user_profile, data=data, partial=True)
+    #     user_profile.
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def verify_account(request):
-    user = request.user
-    user_profile = user.user_profile
-    if user.is_authenticated and user_profile.follower_count >= 100:
-        if user.post_user.count > 10 and (user_profile.timestamp[:4]-timezone.now()[:4]) >= 3:
-            for post in user.post_user:
-                post_like_count = post.likes.count()
-            if post_like_count >= 1000:
-                user_profile.verified = True
-                user_profile.save()
-            return Response({"data": "verified"})
-    else:
-        return Response({"data":"Not verified"})
+# @api_view(['PATCH'])
+# @permission_classes([IsAuthenticated])
+# def verify_account(request):
+#     user = request.user
+#     user_profile = user.user_profile
+#     if user.is_authenticated and user_profile.follower_count >= 100:
+#         if user.post_user.count > 10 and (user_profile.timestamp[:4]-timezone.now()[:4]) >= 3:
+#             for post in user.post_user:
+#                 post_like_count = post.likes.count()
+#             if post_like_count >= 1000:
+#                 user_profile.verified = True
+#                 user_profile.save()
+#             return Response({"data": "verified"})
+#     else:
+#         return Response({"data":"Not verified"})
 
 
 # @api_view(['GET'])

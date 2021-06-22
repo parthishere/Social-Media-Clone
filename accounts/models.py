@@ -2,7 +2,7 @@ from django.db import models
 from django.shortcuts import Http404
 from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.utils.text import slugify
-from django.shortcuts import reverse, redirect
+from django.shortcuts import reverse, redirect, get_object_or_404
 from time import timezone
 import uuid
 from rest_framework.reverse import reverse as api_reverse
@@ -40,51 +40,52 @@ class TopicTag(models.Model):
 
 class UserProfileManager(models.Manager):
     
-    
-    def remove_follower(self, request, id=None):
+    def remove_follower(self, request, username=None):
+        user = request.user
+        user_profile = self.__class__.objects.get(user=user)
         
+        requested_user = get_object_or_404(User, username=username)
         if request.user.is_authenticated:
-            try:
-                requested_user_obj = self.model.objects.get(id=id)
-            except Exception as e:
-                print(e)
-            if requested_user_obj.exists():
-                pass
-        return requested_user_obj
+            
+            if requested_user in user_profile.following.all():
+                user_profile.following.remove(requested_user)
+                user_profile.save()
+                
+        return requested_user
     
     
-    def add_or_remove_to_following(self, request, id=None):
+    def add_or_remove_to_following(self, request, username=None):
         user = request.user
         added = False
         try:
-            following_user = self.model.objects.get(id=id)
+            user_to_follow_profile = self.__class__.objects.get(user__username=username)
         except Exception as e:
             print(e) 
         if request.user.is_authenticated:
-            if request.user == following_user.user:
+            if request.user == user_to_follow_profile.user:
                 raise Http404('You cant folllow you!')
-            if user in following_user.followers.objects.all():
-                following_user.followers.remove(user)
-                following_user.followers_count -= 1
-                following_user.save()
+            if user in user_to_follow_profile.followers.objects.all():
+                user_to_follow_profile.followers.remove(user)
+                user_to_follow_profile.followers_count -= 1
+                user_to_follow_profile.save()
                 added = False
             else:
-                following_user.followers.add(user)
-                following_user.followers_count += 1
-                following_user.save()
+                user_to_follow_profile.followers.add(user)
+                user_to_follow_profile.followers_count += 1
+                user_to_follow_profile.save()
                 added = True
                 # Requested User and/ me who just clicked follow button 
-        return following_user, user, added
+        return user_to_follow_profile, user, added
     
     
-    def get_following_of_user(self, uuid):
-        requested_user = self.model.get(id=uuid).user
+    def get_following_of_user(self, username=None):
+        requested_user = self.__class__.objects.get(user__username=username).user
         following_users = requested_user.following
         return following_users
     
     
-    def get_followers_of_user(self, uuid):
-        requested_user = self.model.get(id=uuid)
+    def get_followers_of_user(self, username=None):
+        requested_user = UserProfile.objects.get(user__username=username)
         followers = requested_user.followers
         return followers
         
@@ -104,7 +105,7 @@ class UserProfile(models.Model):
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
-    interest = models.CharField(max_length=100, null=True, blank=True)
+    intrest = models.CharField(max_length=100, null=True, blank=True)
     topic = models.ManyToManyField(TopicTag, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
@@ -167,7 +168,7 @@ class UserProfile(models.Model):
         return liked_posts
     
     def get_api_url(self, request=None):
-        return api_reverse('account-api:profile-detail', kwargs={"id": self.id}, request=request)
+        return api_reverse('account-api:profile-detail', kwargs={"username": self.user.username}, request=request)
         
     
     

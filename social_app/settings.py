@@ -35,7 +35,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['devmediaone.herokuapp.com', '1227.0.0.1']
+ALLOWED_HOSTS = ['devmediaone.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_rest_allauth',
     'rest_framework',
     'django_filters',
     'corsheaders',
@@ -60,7 +59,7 @@ INSTALLED_APPS = [
     'accounts',
     'post',
     'comments',
-    'notification',
+    'notifications',
     
 ]
 SITE_ID = 1
@@ -188,4 +187,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+
+
 LOGIN_REDIRECT_URL = 'api/users/update-profile/'
+
+

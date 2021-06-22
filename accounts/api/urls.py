@@ -14,8 +14,8 @@ from .views import (
     get_requested_user_following,
     delete_my_account,
     update_interests,
-    save_post,
-    verify_account,
+    # verify_account,
+    remove_user_from_followers,
 
 )
 
@@ -28,15 +28,15 @@ urlpatterns = [
     path('delete-image/', delete_self_profile_img, name='delete-img'),
     path('your-followers/', get_self_followers, name='your-followers'),
     path('your-following/', get_self_following, name='your-following'),
-    path('<id>/', retrive_profile, name='profile-detail'),
+    path('<str:username>/', retrive_profile, name='profile-detail'),
     path('', UserProfileListAPI.as_view(), name='profile-list'),
-    path('follow/<id>/', follow_requested_user, name='follow-profile'),
-    path('user-followers/<id>/', get_requested_user_followers, name='user-followers'),
-    path('user-following/<id>/', get_requested_user_following, name='user-following'),
+    path('follow/<str:username>/', follow_requested_user, name='follow-profile'),
+    path('remove-following/<str:username>/', remove_user_from_followers, name='remove-following'),
+    path('user-followers/<str:username>/', get_requested_user_followers, name='user-followers'),
+    path('user-following/<str:username>/', get_requested_user_following, name='user-following'),
     path('delete-profile/', delete_my_account, name='delete-profile'),
     path('intrests/update', update_interests, name='update-intrest'),
-    path('save/<int:pk>', save_post, name='save-post'),
-    path('verify/', verify_account, name='verify-account'),
+    # path('verify/', verify_account, name='verify-account'),
     # path('/', ProfileListAPIView.as_view(), name='profile_list'),
     # path('list/', ProfileListAPIView.as_view(), name='profile_list'),
 ]

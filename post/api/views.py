@@ -100,7 +100,32 @@ def user_posts(request, id=None):
     posts = user_profile.user.post_user or None
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
-        
-    
-    
 
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def save_post(request, pk=None):
+    post = get_object_or_404(Post, pk=pk)
+    data = {}
+    user_profile = request.user.user_profile
+    if post in user_profile.saved_posts.all():
+        user_profile.saved_posts.remove(post)
+        data['data'] = 'post removed from saved'
+    else:
+        user_profile.saved_posts.add(post)
+        data['data'] = 'post added to saved'
+        
+    user_profile.save()
+    
+    return Response(data)
+
+class SavedPostListAPIView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
+    permission_classes = [permissions.IsAuthenticated]    
+    
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = user.user_profile
+        saved_post = user_profile.saved_post.all()
+        return saved_post
