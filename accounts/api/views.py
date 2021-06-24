@@ -96,7 +96,7 @@ def get_self_following(request):
     return Response(serializer.data)
 
 @api_view(['GET',])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny,])
 def retrive_profile(request, username=None):
     user_profile = get_object_or_404(UserProfile, user__username=username, active=True)
     serializer = UserProfileSerializer(user_profile, many=False)
@@ -115,8 +115,8 @@ class UserProfileListAPI(generics.ListAPIView):
         return { "request":self.request }
     
     
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])
 def follow_requested_user(request, username=None):
     """ Here *username* is requested user's *username* """
     
@@ -145,8 +145,8 @@ def follow_requested_user(request, username=None):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
-@permission_classes([IsOwnerOrReadOnly])
+@api_view(['POST',])
+@permission_classes([IsOwnerOrReadOnly,])
 def remove_user_from_followers(request, username=None):
     """ Here *username* is requested user's *username* """
     self_profile = request.user.user_profile
@@ -166,7 +166,7 @@ def remove_user_from_followers(request, username=None):
 
 
 @api_view(['GET', ])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny,])
 def get_requested_user_following(request, username=None):
     """ using Reverse Queryset """
     requested_user = UserProfile.objects.get(user__username=username, active=True).user
@@ -179,7 +179,7 @@ def get_requested_user_following(request, username=None):
   
   
 @api_view(['GET', ])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny,])
 def get_requested_user_followers(request, username=None):
     requested_user_profile = UserProfile.objects.get(user__username=username, active=True)
     if requested_user_profile is not None:
@@ -189,8 +189,8 @@ def get_requested_user_followers(request, username=None):
     else:
         return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)
     
-@api_view(['POST'])
-@permission_classes([IsOwnerOrReadOnly])
+@api_view(['POST',])
+@permission_classes([IsOwnerOrReadOnly,])
 def delete_my_account(request):
     user = request.user
     user_profile = request.user.user_profile
@@ -200,18 +200,22 @@ def delete_my_account(request):
     return Response({'detail':'Account Deleted Successfully'}, status=status.HTTP_200_OK)
 
 
-@api_view(['PATCH'])
-@permission_classes((IsOwnerOrReadOnly))
+@api_view(['PATCH',])
+@permission_classes((IsAuthenticated,))
 def update_interests(request): 
-    user_profile = request.user.userprofile
-    interests = request.data
-    user_profile.interests.set(
-        TopicTag.objects.get_or_create(name=interest['name'])[0] for interest in interests
+    user_profile = request.user.user_profile
+    intrests = request.data
+    user_profile.intrest.set(
+            TopicTag.objects.get_or_create(name=intrest['name']) for intrest in intrests
     )
     user_profile.save()
     serializer = UserProfileSerializer(user_profile, many=False)
     return Response(serializer.data)
-     
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommended_user(request):
+    pass
 
 # class VerifyAccount(APIView):
     # serializer_class = UserProfile
@@ -241,10 +245,7 @@ def update_interests(request):
 #         return Response({"data":"Not verified"})
 
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def recommended_user(request):
-#     pass
+
    
    
 # @api_view(['POST'])

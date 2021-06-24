@@ -63,6 +63,7 @@ def all_comment_list(request):
 
 
 class UpdateComment(APIView):
+    queryset = Comment.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = CommentSerializer
     lookup_field = ['pk']
@@ -77,6 +78,7 @@ class UpdateComment(APIView):
   
       
 class DeleteComment(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
     lookup_field = ['pk']

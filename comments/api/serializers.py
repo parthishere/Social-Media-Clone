@@ -9,3 +9,8 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         depth = 1
+        
+    # def create(self, obj):
+    #     user = self.context.get('request').user
+    #     obj.user = user
+    #     obj.save()
