@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
     path('api/posts/', include('post.api.urls', namespace='post-api')),
     path('api/comments/', include('comments.api.urls', namespace='comment-api')),
+    path('api/notifications/', include('notifications.api.urls', namespace='notification-api')),
     path('schema/', get_schema_view(
         title="MumbleAPI",
         description="API for the Social-Clone.dev",
