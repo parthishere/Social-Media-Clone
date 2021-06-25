@@ -94,7 +94,6 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
     name = models.CharField(max_length=100, blank=True, null=True)
     bio = models.TextField(max_length=100, blank=True, null=True)
