@@ -212,10 +212,26 @@ def update_interests(request):
     serializer = UserProfileSerializer(user_profile, many=False)
     return Response(serializer.data)
 
+
+
+from django.db.models import Count
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def recommended_user(request):
-    pass
+    user = request.user
+    user_qs = UserProfile.objects.filter(user=user)
+    user_profile = request.user.user_profile
+    users = User.objects.annotate(followers_count = Count('userprofile__followers')).order_by('followers_count').reverse().exclude(user=user)[0:5]  # reverse query of User count(model__field)
+    for u in user.following.all():
+        if u in users:
+            user_qs.append(u)
+            
+    user_qs.exclude(user=user)
+    
+    serializer = UserProfileSerializer(user_qs, many=True)
+    return Response(serializer.data)
+
 
 # class VerifyAccount(APIView):
     # serializer_class = UserProfile
