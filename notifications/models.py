@@ -27,8 +27,8 @@ class Notification(models.Model):
     post = models.ForeignKey(Post, related_name='post_notification', blank=True, null=True, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, related_name='comment_notification', blank=True, null=True, on_delete=models.CASCADE)
     read = models.BooleanField(default=False)
-    created = models.CharField(auto_created=True)
-    content = models.TextField()
+    created = models.BooleanField(default=True)
+    content = models.TextField(default="You have notification")
     
     def __str__(self):
         return self.notification_type + ' | from : ' +self.from_user.username 
