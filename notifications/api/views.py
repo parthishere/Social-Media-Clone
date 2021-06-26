@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
+from rest_framework import status
 
 from rest_framework import filters
 
+from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import NotificationSerializer
 from notifications.models import Notification
 from accounts.models import User, UserProfile
@@ -27,7 +29,7 @@ class NotificationListAPIView(generics.ListAPIView):
     search_fields = ['to_user__username', 'from_user__username', 'content', 'notification_type', ]
     ordering_fields = '__all__'
     
-class UserNotificationListAPIView(generics.ListAPIView):
+class UserAllNotificationListAPIView(generics.ListAPIView):
     queryset = Notification.objects.all()
     permission_classes = [IsAuthenticated,]
     serializer_class = NotificationSerializer
@@ -38,12 +40,34 @@ class UserNotificationListAPIView(generics.ListAPIView):
     def get_queryset(self):
         return Notification.objects.filter(to_user__in=self.request.user)
     
+class UserUnreadNotificationListAPIView(generics.ListAPIView):
+    queryset = Notification.objects.all()
+    permission_classes = [IsAuthenticated,]
+    serializer_class = NotificationSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['to_user__username', 'from_user__username', 'content', 'notification_type', ]
+    ordering_fields = '__all__'
     
-def read_notification(request):
-    pass
-
-def delete_notification(request):
-    pass
-
+    def get_queryset(self):
+        return Notification.objects.filter(to_user__in=self.request.user, read=False)
     
+    
+def read_notification(request, pk=None):
+    notification = get_object_or_404(Notification, pk=pk)
+    if not notification.read:
+        notification.read = True
+        notification.save()
+        
+    serializer = NotificationSerializer(notification, many=False)
+    return Response(serializer.data)
+
+def delete_notification(request, pk=None):
+    notification = get_object_or_404(Notification, pk=pk)
+    if not notification.read:
+        notification.delete()
+        return Response({'data': 'deleted Successfully'}, status=status.HTTP_200_OK)
+    else:    
+        return Response({"data": "Error"}, status=status.HTTP_400_BAD_REQUEST)
+
+  
         
