@@ -93,7 +93,7 @@ def follow_notification_post_save(sender, instance, created, **kwargs):
                                     from_user=from_user,
                                     to_user=to_user,
                                     notification_type='follow',
-                                    content=f"{from_user.username} just followed you",
+                                    content=f"just followed you",
                                     follow=instance.user,
                                     )
 
