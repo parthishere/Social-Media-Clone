@@ -105,12 +105,11 @@ class UserProfile(models.Model):
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
     intrest = models.ManyToManyField(TopicTag, related_name='profile_intrest', blank=True)
-    topic = models.ManyToManyField(TopicTag, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     verified = models.BooleanField(default=False)
     active = models.BooleanField(default=True)  # we are gonna use it as archive account 
     email_verified = models.BooleanField(default=False)
-    saved_posts = models.ManyToManyField('post.Post')
+    saved_posts = models.ManyToManyField('post.Post', blank=True)
     
     objects = UserProfileManager()
     
@@ -178,6 +177,17 @@ def post_save_user_reciever(sender, created, instance, *args, **kwargs):
         
         
 post_save.connect(post_save_user_reciever, sender=User)
+
+
+
+def pre_save_userprofile_reciever(sender, instance, *args, **kwargs):
+    user_profile = instance
+    user = user_profile.user
+    user_profile.followers_count = user_profile.followers.all().count()
+    user_profile.following_count = user.following.all().count()
+        
+        
+post_save.connect(pre_save_userprofile_reciever, sender=UserProfile)
 
 
 
