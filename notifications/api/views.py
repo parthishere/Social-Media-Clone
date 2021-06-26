@@ -38,7 +38,7 @@ class UserAllNotificationListAPIView(generics.ListAPIView):
     ordering_fields = '__all__'
     
     def get_queryset(self):
-        return Notification.objects.filter(to_user__in=self.request.user)
+        return Notification.objects.filter(to_user=self.request.user)
     
 class UserUnreadNotificationListAPIView(generics.ListAPIView):
     queryset = Notification.objects.all()
@@ -49,9 +49,10 @@ class UserUnreadNotificationListAPIView(generics.ListAPIView):
     ordering_fields = '__all__'
     
     def get_queryset(self):
-        return Notification.objects.filter(to_user__in=self.request.user, read=False)
+        return Notification.objects.filter(to_user=self.request.user, read=False)
     
-    
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])  
 def read_notification(request, pk=None):
     notification = get_object_or_404(Notification, pk=pk)
     if not notification.read:
@@ -61,6 +62,9 @@ def read_notification(request, pk=None):
     serializer = NotificationSerializer(notification, many=False)
     return Response(serializer.data)
 
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])  
 def delete_notification(request, pk=None):
     notification = get_object_or_404(Notification, pk=pk)
     if not notification.read:

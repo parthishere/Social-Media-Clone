@@ -20,7 +20,7 @@ NOTIFICATION_CHOICES = (
 
 class Notification(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_user')
-    to_user = models.ManyToManyField(User, blank=True)
+    to_user = models.ForeignKey(User, related_name='notification_to_user', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     notification_type = models.CharField(max_length=5)
     follow = models.ForeignKey(User, related_name='follow_notification_user', blank=True, null=True, on_delete=models.CASCADE)
@@ -37,14 +37,15 @@ class Notification(models.Model):
 def post_notification_post_save(sender, instance, created, **kwargs):
     if created:
         from_user = instance.user
-        to_user = instance.user.user_profile.followers
-        Notification.objects.create(
-                                    from_user=from_user,
-                                    to_user=to_user,
-                                    notification_type='post',
-                                    content=f"{instance.user.username} posted picture !",
-                                    post=instance,
-                                    )
+        to_users = instance.user.user_profile.followers.all()
+        for to_user in to_users:
+            Notification.objects.create(
+                                        from_user=from_user,
+                                        to_user=to_user,
+                                        notification_type='post',
+                                        content=f"{instance.user.username} posted picture !",
+                                        post=instance,
+                                        )
     
 post_save.connect(post_notification_post_save, sender=Post)
 
@@ -69,8 +70,8 @@ post_save.connect(comment_notification_post_save, sender=Comment)
 
 def like_notification_post_save(sender, instance, created, **kwargs):
     if not created:
-        from_user = instance.user
-        to_user = instance.likes.first()
+        from_user = instance.likes.first()
+        to_user = instance.user
         Notification.objects.create(
                                     from_user=from_user,
                                     to_user=to_user,
@@ -86,7 +87,7 @@ post_save.connect(like_notification_post_save, sender=Post)
     
 def follow_notification_post_save(sender, instance, created, **kwargs):
     if not created:
-        from_user = instance.followers.first()
+        from_user = instance.following.first()
         to_user = instance.user
         Notification.objects.create(
                                     from_user=from_user,
