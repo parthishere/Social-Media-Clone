@@ -20,7 +20,7 @@ NOTIFICATION_CHOICES = (
 
 class Notification(models.Model):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_user')
-    to_user = models.ForeignKey(User, related_name='notification_to_user', blank=True)
+    to_user = models.ForeignKey(User,  on_delete=models.CASCADE, related_name='notification_to_user', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     notification_type = models.CharField(max_length=5)
     follow = models.ForeignKey(User, related_name='follow_notification_user', blank=True, null=True, on_delete=models.CASCADE)
