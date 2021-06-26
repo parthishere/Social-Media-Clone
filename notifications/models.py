@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, m2m_changed
 
 from comments.models import Comment
 from post.models import Post
@@ -85,8 +85,10 @@ post_save.connect(like_notification_post_save, sender=Post)
     
     
     
-def follow_notification_post_save(sender, instance, created, **kwargs):
-    if not created:
+def follow_notification_m2m_changed(sender, instance, action, pk_set, **kwargs):
+    print(action)
+    print(pk_set)
+    if action == "post_add":
         from_user = instance.followers.all().first()
         from_user_username = from_user.username
         to_user = instance.user
@@ -98,4 +100,4 @@ def follow_notification_post_save(sender, instance, created, **kwargs):
                                     follow=instance.user,
                                     )
 
-post_save.connect(follow_notification_post_save, sender=UserProfile)
+m2m_changed.connect(follow_notification_m2m_changed, sender=UserProfile.followers.through)

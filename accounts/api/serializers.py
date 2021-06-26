@@ -16,7 +16,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['url', 'id', 'user', 'name', 'bio', 'birth_date',
                   'profile_img', 'post_count', 'followers', 'following', 'following_count',
-                  'followers_count', 'intrest', 'created', 'topic', 'timestamp',
+                  'followers_count', 'intrest', 'created', 'timestamp',
                   'verified', 'active']
         depth = 1
         read_only_field = ['id', 'user', 'timestamp',

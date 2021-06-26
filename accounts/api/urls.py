@@ -16,6 +16,7 @@ from .views import (
     update_interests,
     # verify_account,
     remove_user_from_followers,
+    recommended_user,
 
 )
 
@@ -36,6 +37,7 @@ urlpatterns = [
     path('user-following/<str:username>/', get_requested_user_following, name='user-following'),
     path('delete-profile/', delete_my_account, name='delete-profile'),
     path('intrests/update', update_interests, name='update-intrest'),
+    path('recommended-users/', recommended_user, name='recommended-user'),
     # path('verify/', verify_account, name='verify-account'),
     # path('/', ProfileListAPIView.as_view(), name='profile_list'),
     # path('list/', ProfileListAPIView.as_view(), name='profile_list'),

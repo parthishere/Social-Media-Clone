@@ -180,6 +180,7 @@ post_save.connect(post_save_user_reciever, sender=User)
 
 
 
+
 def pre_save_userprofile_reciever(sender, instance, *args, **kwargs):
     user_profile = instance
     user = user_profile.user
@@ -187,7 +188,7 @@ def pre_save_userprofile_reciever(sender, instance, *args, **kwargs):
     user_profile.following_count = user.following.all().count()
         
         
-post_save.connect(pre_save_userprofile_reciever, sender=UserProfile)
+pre_save.connect(pre_save_userprofile_reciever, sender=UserProfile)
 
 
 

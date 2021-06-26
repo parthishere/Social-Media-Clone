@@ -224,8 +224,9 @@ def recommended_user(request):
     user_profile = request.user.user_profile
     users = User.objects.annotate(followers_count = Count('userprofile__followers')).order_by('followers_count').reverse().exclude(user=user)[0:5]  # reverse query of User count(model__field)
     for u in user.following.all():
-        if u in users:
-            user_qs.append(u)
+        user_qs.append(u.following.first())
+        if user_qs.count() > 10:
+            break
             
     user_qs.exclude(user=user)
     
