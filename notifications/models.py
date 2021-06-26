@@ -31,7 +31,7 @@ class Notification(models.Model):
     content = models.TextField(default="You have notification", max_length=255)
     
     def __str__(self):
-        return self.notification_type + ' | from : ' +self.from_user.username 
+        return self.notification_type + ' | from : ' +self.from_user.username + ' | to : ' + self.to_user.username
     
     
 def post_notification_post_save(sender, instance, created, **kwargs):
@@ -88,12 +88,13 @@ post_save.connect(like_notification_post_save, sender=Post)
 def follow_notification_post_save(sender, instance, created, **kwargs):
     if not created:
         from_user = instance.followers.all().first()
+        from_user_username = from_user.username
         to_user = instance.user
         Notification.objects.create(
                                     from_user=from_user,
                                     to_user=to_user,
                                     notification_type='follow',
-                                    content=f"just followed you",
+                                    content=f"{from_user_username} just followed you",
                                     follow=instance.user,
                                     )
 
