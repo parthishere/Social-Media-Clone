@@ -11,7 +11,7 @@ from .forms import UserProfileForm
 # Create your views here.
 
 class UserProfileDetailView(View):
-    template_name = "accounts/user_profile.html"
+    template_name = "accounts/index.html"
     
     def get(self, request):
         context = {}

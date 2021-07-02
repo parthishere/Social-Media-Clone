@@ -26,10 +26,19 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('allauth.urls')),
+    
     path('api/users/', include('accounts.api.urls', namespace='accounts-api')),
+    path('users/', include('accounts.urls', namespace='accounts')),
+    
     path('api/posts/', include('post.api.urls', namespace='post-api')),
+    path('post/', include('post.urls', namespace='post')),
+    
     path('api/comments/', include('comments.api.urls', namespace='comment-api')),
+    path('comments/', include('comments.urls', namespace='comments')),
+    
     path('api/notifications/', include('notifications.api.urls', namespace='notification-api')),
+    path('notifications/', include('notifications.urls', namespace='notification')),
+    
     path('chat/', include('chat.urls', namespace='chat')),
     path('schema/', get_schema_view(
         title="MumbleAPI",
