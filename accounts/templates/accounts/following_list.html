@@ -17,12 +17,12 @@
     <hr>
     {{ objects_list }} {{ count }}
     {% for obj in objects_list %}
-    <div class="container border-dark shadow-lg d-xxl-flex justify-content-xxl-start align-items-xxl-center" style="width: 1000px;"><img class="border rounded-circle" src="{{ obj.user_profile.profile_img.url }}" style="width: 150px;height: 150px;">
+    <a href="{% url 'accounts:profile' username=obj.username %}"><div class="container border-dark shadow-lg d-xxl-flex justify-content-xxl-start align-items-xxl-center" style="width: 1000px;"><img class="border rounded-circle" src="{{ obj.user_profile.profile_img.url }}" style="width: 150px;height: 150px;">
         <div class="col">
             <h1>{{ obj.username }}</h1>
             <p>{{ obj.user_profile.bio }}</p>
         </div>
-    </div>
+    </div></a>
     {% endfor %}
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
