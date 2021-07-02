@@ -1,7 +1,7 @@
 from django.urls import path
 
-app_name = 'accounts'
+app_name = 'comments'
 
 urlpatterns = [
-    path('', ),
+    # path('', ),
 ]

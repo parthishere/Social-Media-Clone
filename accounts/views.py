@@ -11,15 +11,15 @@ from .forms import UserProfileForm
 # Create your views here.
 
 class UserProfileDetailView(View):
-    template_name = "accounts/index.html"
+    template_name = "accounts/user_profile.html"
     
-    def get(self, request):
+    def get(self, request, username=None):
         context = {}
-        user = request.user
-        user_profile = request.user.user_profile
+        user_profile = UserProfile.objects.get(user__username=username)
+        user = user_profile.user
         context['user'] = user
         context['user_profile'] = user_profile
-        context['posts'] = user.post.all()
+        context['posts'] = user.post_user.all()
         return render(request, self.template_name, context=context)
         
         
@@ -53,6 +53,7 @@ class UpdateUserProfile(LoginRequiredMixin, UpdateView):
     template_name = 'accounts/update_profile_form.html'
     form_class = UserProfileForm
     success_url = '/home/'
+    lookup_field = ['user__username']
     
     # def form_validate(self, form):
     #     if form.instance.email is not None:

@@ -41,22 +41,22 @@
         <!-- Start: 1 Row 2 Columns -->
         <div class="container">
             <div class="row d-xxl-flex justify-content-xxl-end">
-                <div class="col d-xxl-flex order-sm-first order-md-first order-lg-first order-xl-first justify-content-xxl-start align-items-xxl-center order-xxl-first"><img class="rounded-circle img-fluid bg-dark border border-success shadow-lg d-xxl-flex" src="/assets/img/Pink%20Neon%20Noir%20_%20Vaporwave%20E-sports%20Animated%20Logo.gif" width="150" height="150" alt="Profile Pic">
-                    <p class="text-center d-xxl-flex" style="margin: 30px;">Name</p>
+                <div class="col d-xxl-flex order-sm-first order-md-first order-lg-first order-xl-first justify-content-xxl-start align-items-xxl-center order-xxl-first"><img class="rounded-circle img-fluid bg-dark border border-success shadow-lg d-xxl-flex" src="{{ user_profile.profile_img.url }}" width="150" height="150" alt="Profile Pic">
+                    <p class="text-center d-xxl-flex" style="margin: 30px;">{{user.username}}</p>
                 </div>
                 <div class="col text-start d-xxl-flex justify-content-xxl-center align-items-xxl-center">
-                    <p class="text-break text-start">kljdoajjsl knkncakjc&nbsp;</p>
+                    <p class="text-break text-start">{{ user_profile.bio }}&nbsp;</p>
                 </div>
                 <div class="col-md-6 text-center" style="margin: 100;">
                     <div class="row">
                         <div class="col">
-                            <h2 class="text-center">Followers</h2>
-                            <p class="text-center">10</p>
+                            <a href="{% url 'accounts:user-followers' username=user.username %}"><h2 class="text-center">Followers</h2></a>
+                            <p class="text-center">{{user_profile.followers_count}}</p>
                             <hr>
                         </div>
                         <div class="col">
-                            <h2>Following</h2>
-                            <p>10</p>
+                            <a href="{% url 'accounts:user-following' username=user.username %}"><h2>Following</h2></a>
+                            <p>{{ user_profile.following_count }}</p>
                             <hr>
                         </div>
                     </div><button class="btn btn-light text-center border rounded-pill border-primary shadow-lg" type="button" style="margin: 10px;">Follow</button>
@@ -78,12 +78,9 @@
                     <div class="tab-pane active" role="tabpanel" id="tab-1">
                         <!-- Start: Photos -->
                         <div class="row photos" data-bss-baguettebox="">
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/building.jpg"><img class="img-fluid" src="/assets/img/building.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/loft.jpg"><img class="img-fluid" src="/assets/img/loft.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col"><img class="img-fluid" src="/assets/img/desk.jpg"><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/building.jpg"></a><img class="img-fluid" src="/assets/img/building.jpg"><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/loft.jpg"><img class="img-fluid" src="/assets/img/loft.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/desk.jpg"></a><img class="img-fluid" src="/assets/img/desk.jpg"><button class="btn btn-primary" type="button">Button</button></div>
+                        {% for post in posts %}
+                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="{{ post.image.url }}"><img class="img-fluid" src="{{ post.image.url }}"></a><button class="btn btn-primary" type="button">Button</button></div>
+                            {% endfor %}
                         </div><!-- End: Photos -->
                     </div>
                     <div class="tab-pane" role="tabpanel" id="tab-2">
