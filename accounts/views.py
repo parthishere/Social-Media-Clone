@@ -41,13 +41,13 @@ class UserSearchListView(ListView):
         if query is not None:
             obj_list = (
                 Q(user__username__icontains=query) | Q(bio__icontains=query) | Q(user__first_name__icontains=query) | 
-                Q(followers__username__in=query) |Q(user__following__username=query)
+                Q(followers__username__in=query) 
             )
-            context['objects_list'] = UserProfile.objects.filter(obj_list).distinct()
+            context['objects_list'] = UserProfile.objects.filter(obj_list).order_by('-followers_count').distinct()
             context['query'] = query
             return context
         else:
-            context['objects_list'] = UserProfile.objects.all().order_by('followers_count')[0:5]
+            context['objects_list'] = UserProfile.objects.all().order_by('-followers_count')
             return context
     
 
