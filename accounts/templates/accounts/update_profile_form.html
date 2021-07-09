@@ -1,8 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 
 {% block body_block %}
 <form method='POST' action="{% url 'accounts:update' username=request.user.username %}">
 {% csrf_token %}
 {{ form.as_p }}
+<input type='submit' class='btn btn-primary' value='submit'>
 </form>
 {% endblock %}

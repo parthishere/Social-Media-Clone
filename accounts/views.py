@@ -55,10 +55,12 @@ class UpdateUserProfile(LoginRequiredMixin, UpdateView):
     queryset = UserProfile.objects.all()
     template_name = 'accounts/update_profile_form.html'
     form_class = UserProfileForm
+    model = UserProfile
     success_url = '/list/'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
+    slug_field = 'user__username'
+    slug_url_kwarg = 'user__username'
     lookup_field = ['user__username']
+    
     
     # def form_validate(self, form):
     #     if form.instance.email is not None:
@@ -70,7 +72,23 @@ class UpdateUserProfile(LoginRequiredMixin, UpdateView):
             return reverse(next_url)
         else: 
             return self.success_url
+        
+def user_profile_update(request, username=None):
+    user_profile = UserProfile.objects.get(user__username=username)
+    form = UserProfileForm(request.POST or None, instance=user_profile)
     
+    context = { 'form': form, }
+    
+    if request.POST:
+        if form.is_valid():
+            form.save()
+            context['form'] = form    
+            return redirect(reverse('accounts:profile', kwargs={'username':request.user.username}))
+    else:
+        form = UserProfileForm(request.POST or None, instance=user_profile)
+        context['form'] = form
+
+    return render(request, 'accounts/update_profile_form.html', context=context)
     
 def user_followers_list(request, username=None):
     user_profile = UserProfile.objects.get(user__username=username)
