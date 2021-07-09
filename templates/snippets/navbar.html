@@ -1,0 +1,62 @@
+
+{% url 'accounts:profile' username=request.user.username as profile_url %}
+{% comment %} {% url 'posts:list' as post_url %} {% endcomment %}
+{% url 'accounts:update' username=request.user.username as profile_update_url%}
+{% url 'accounts:list' as user_list_url %}
+
+
+<div class="col-md-12">
+  <!-- Start: Navigation with Button -->
+  <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+    <div class="container">
+      <a class="navbar-brand" href="#">Insta Clone</a
+      ><button
+        data-bs-toggle="collapse"
+        class="navbar-toggler"
+        data-bs-target="#navcol-1"
+      >
+        <span class="visually-hidden">Toggle navigation</span
+        ><span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ profile_url }}">Your Profile</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{{ user_list_url }}">List</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{{ profile_url }}">Your Profile</a>
+          </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'admin' %}">Admin</a></li>
+          {% endif %}
+          <li class="nav-item dropdown">
+            <a
+              class="dropdown-toggle nav-link"
+              aria-expanded="false"
+              data-bs-toggle="dropdown"
+              href="#"
+              >Dropdown
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">First Item</a
+              ><a class="dropdown-item" href="#">Second Item</a
+              ><a class="dropdown-item" href="#">Third Item</a>
+            </div>
+          </li>
+        </ul>
+        <span class="navbar-text actions">
+          <a class="login" href="#">Log In</a
+          ><a class="btn btn-light action-button" role="button" href="#"
+            >Sign Up</a
+          ></span
+        >
+      </div>
+    </div>
+  </nav>
+  <!-- End: Navigation with Button -->
+</div>

@@ -10,7 +10,9 @@ from .models import User, UserProfile, TopicTag
 from .forms import UserProfileForm
 # Create your views here.
 
+
 class UserProfileDetailView(View):
+    queryset = UserProfile.objects.all()
     template_name = "accounts/user_profile.html"
     
     def get(self, request, username=None):
@@ -74,8 +76,9 @@ def user_followers_list(request, username=None):
     
     followers_qs = user_profile.followers.all()
     followers_count = user_profile.followers_count
+    
 
-    context['objects_list'] = followers_qs
+    context['objects_list'] = followers_qs ## User Object
     context['count'] = followers_count
     
     return render(request, 'accounts/followers_list.html', context=context)
@@ -89,7 +92,7 @@ def user_following_list(request, username=None):
     following_qs = user.following.all().prefetch_related('user')
     following_count = user_profile.following_count
     
-    context['objcets_list'] = following_qs
+    context['objects_list'] = following_qs # User Object
     context['count'] = following_count
     return render(request, 'accounts/following_list.html', context=context)
 
@@ -101,9 +104,13 @@ def follow_unfollow_requested_user(request, username=None):
     requested_user_profile = UserProfile.objects.get(user__username=username)
     requested_user = requested_user_profile.user
 
+    
     if user not in requested_user_profile.followers.all():
         requested_user_profile.followers.add(user)
+        # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
+        requested_user_profile.save()
     else:
         requested_user_profile.followers.remove(user)
+        requested_user_profile.save()
         
     return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))

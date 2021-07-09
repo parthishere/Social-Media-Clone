@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>profile page</title>
+    <title>{% block title_block %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static '/assets/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
     <link rel="stylesheet" href="{% static '/assets/css/Lightbox-Gallery.css' %}">
@@ -15,87 +15,9 @@
 </head>
 
 <body>
-    <!-- Start: Lightbox Gallery -->
-    <section class="photo-gallery">
-        <!-- Start: 2 Rows 1+1 Columns -->
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- Start: Navigation with Button -->
-                    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
-                        <div class="container"><a class="navbar-brand" href="#">Company Name</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-                            <div class="collapse navbar-collapse" id="navcol-1">
-                                <ul class="navbar-nav me-auto">
-                                    <li class="nav-item"><a class="nav-link active" href="#">First Item</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Second Item</a></li>
-                                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Dropdown </a>
-                                        <div class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>
-                                    </li>
-                                </ul><span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-light action-button" role="button" href="#">Sign Up</a></span>
-                            </div>
-                        </div>
-                    </nav><!-- End: Navigation with Button -->
-                </div>
-            </div>
-        </div><!-- End: 2 Rows 1+1 Columns -->
-        <!-- Start: 1 Row 2 Columns -->
-        <div class="container">
-            <div class="row d-xxl-flex justify-content-xxl-end">
-                <div class="col d-xxl-flex order-sm-first order-md-first order-lg-first order-xl-first justify-content-xxl-start align-items-xxl-center order-xxl-first"><img class="rounded-circle img-fluid bg-dark border border-success shadow-lg d-xxl-flex" src="/assets/img/Pink%20Neon%20Noir%20_%20Vaporwave%20E-sports%20Animated%20Logo.gif" width="150" height="150" alt="Profile Pic">
-                    <p class="text-center d-xxl-flex" style="margin: 30px;">Name</p>
-                </div>
-                <div class="col text-start d-xxl-flex justify-content-xxl-center align-items-xxl-center">
-                    <p class="text-break text-start">kljdoajjsl knkncakjc&nbsp;</p>
-                </div>
-                <div class="col-md-6 text-center" style="margin: 100;">
-                    <div class="row">
-                        <div class="col">
-                            <h2 class="text-center">Followers</h2>
-                            <p class="text-center">10</p>
-                            <hr>
-                        </div>
-                        <div class="col">
-                            <h2>Following</h2>
-                            <p>10</p>
-                            <hr>
-                        </div>
-                    </div><button class="btn btn-light text-center border rounded-pill border-primary shadow-lg" type="button" style="margin: 10px;">Follow</button>
-                </div>
-            </div>
-        </div><!-- End: 1 Row 2 Columns -->
-        <div class="container">
-            <!-- Start: Intro -->
-            <div class="intro">
-                <h2 class="text-center">Lightbox Gallery</h2>
-            </div><!-- End: Intro -->
-            <div>
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-bs-toggle="tab" href="#tab-1">About</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-2">Followers</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-3">Tab 3</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" role="tabpanel" id="tab-1">
-                        <!-- Start: Photos -->
-                        <div class="row photos" data-bss-baguettebox="">
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/building.jpg"><img class="img-fluid" src="/assets/img/building.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/loft.jpg"><img class="img-fluid" src="/assets/img/loft.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col"><img class="img-fluid" src="/assets/img/desk.jpg"><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/building.jpg"></a><img class="img-fluid" src="/assets/img/building.jpg"><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/loft.jpg"><img class="img-fluid" src="/assets/img/loft.jpg"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="/assets/img/desk.jpg"></a><img class="img-fluid" src="/assets/img/desk.jpg"><button class="btn btn-primary" type="button">Button</button></div>
-                        </div><!-- End: Photos -->
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="tab-2">
-                        <p>Content for tab 2.</p>
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="tab-3">
-                        <p>Content for tab 3.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section><!-- End: Lightbox Gallery -->
+    {% include 'snippets/navbar.html' with request=request %}
+    {% block body_block %}{% endblock %}
+    
     <script src="{% static '/assets/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
     <script src="{% static '/assets/js/Lightbox-Gallery.js' %}"></script>

@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
-    'channels',
+    # 'channels',
     
     'allauth',
     'allauth.account',
@@ -201,6 +201,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 LOGIN_REDIRECT_URL = 'api/users/update-profile/'
 
-ASGI_APPLICATION = 'social_app.routing.application'
+# ASGI_APPLICATION = 'social_app.routing.application'
 
 

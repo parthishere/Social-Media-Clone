@@ -2,6 +2,7 @@
 
 {% block body_block %}
 <form method='POST' action="{% url 'accounts:update' username=request.user.username %}">
-
+{% csrf_token %}
+{{ form.as_p }}
 </form>
 {% endblock %}

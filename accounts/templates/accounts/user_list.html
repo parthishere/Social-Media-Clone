@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'index.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>profile page</title>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
-    <link rel="stylesheet" href="/assets/css/Lightbox-Gallery.css">
-    <link rel="stylesheet" href="/assets/css/Navigation-Clean.css">
-    <link rel="stylesheet" href="/assets/css/Navigation-with-Button.css">
-    <link rel="stylesheet" href="/assets/css/styles.css">
-</head>
+{% block title_block %}List{% endblock %}
 
-<body>
-    <hr>
-    <div class="container border-dark shadow-lg d-xxl-flex justify-content-xxl-start align-items-xxl-center" style="width: 1000px;"><img class="border rounded-circle" src="/assets/img/IMG_20210413_193342.jpg" style="width: 150px;height: 150px;">
+
+{% block body_block %}
+{% for object in objects_list %}
+    <hr><a href="{% url 'accounts:profile' username=object.user.username %}">
+    {% if object.profile_img %}
+    <div class="container border-dark shadow-lg d-xxl-flex justify-content-xxl-start align-items-xxl-center" style="width: 1000px;"><img class="border rounded-circle" src="{{ object.profile_img.url }}" style="width: 150px;height: 150px;">
+    {% endif %}
         <div class="col">
-            <h1>Name</h1>
-            <p>Paragraph</p>
+            <h1>{{ object.user.username }}</h1>
+            <p>{{ object.bio }}</p>
         </div>
     </div>
+    {% endfor %}
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+    
     <script src="/assets/js/Lightbox-Gallery.js"></script>
-</body>
-
-</html>
+{% endblock %}

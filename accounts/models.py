@@ -185,6 +185,15 @@ def pre_save_userprofile_reciever(sender, instance, *args, **kwargs):
     user_profile = instance
     user = user_profile.user
     user_profile.followers_count = user_profile.followers.all().count()
+    
+    for u in user_profile.followers.all():
+        u.user_profile.followers_count = u.user_profile.followers.all().count()
+        u.user_profile.following_count = u.following.all().count()
+        
+    for u_req in user.following.all():
+        u_req.followers_count = u_req.followers.all().count()
+        u_req.following_count = u_req.user.following.all().count()
+        
     user_profile.following_count = user.following.all().count()
         
         

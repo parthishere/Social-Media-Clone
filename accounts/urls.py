@@ -12,8 +12,8 @@ from .views import (
 app_name = 'accounts'
 
 urlpatterns = [
-    path('<username>/', UserProfileDetailView.as_view(), name='profile'),
     path('list/', UserSearchListView.as_view(), name='list'),
+    path('<username>/', UserProfileDetailView.as_view(), name='profile'),
     path('<username>/update', UpdateUserProfile.as_view(), name='update'),
     path('<username>/followers', user_followers_list, name='user-followers'),
     path('<username>/followings', user_following_list, name='user-following'),
