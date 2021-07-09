@@ -52,9 +52,12 @@ class UserSearchListView(ListView):
     
 
 class UpdateUserProfile(LoginRequiredMixin, UpdateView):
+    queryset = UserProfile.objects.all()
     template_name = 'accounts/update_profile_form.html'
     form_class = UserProfileForm
-    success_url = '/home/'
+    success_url = '/list/'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
     lookup_field = ['user__username']
     
     # def form_validate(self, form):

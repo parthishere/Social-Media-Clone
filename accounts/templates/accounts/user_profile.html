@@ -45,6 +45,11 @@
                     <input type='submit' class="btn btn-light text-center border rounded-pill border-primary shadow-lg" style="margin: 10px;" value='Follow'></input>
                     {% endif %}
                     <form>
+                    {% if request.user %}
+                        {% if request.user == user_profile.user %}
+                        <a href="{% url 'accounts:update' username=request.user.username %}"><button type="button" class="btn btn-info">Update Profile</button></a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div><!-- End: 1 Row 2 Columns -->
