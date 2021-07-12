@@ -234,6 +234,52 @@ def recommended_user(request):
     return Response(serializer.data)
 
 
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])
+def report_account(request, username=None):
+    reported_user_profile = get_object_or_404(UserProfile, user__username=username)
+    reported_user = reported_user_profile.user
+
+    if request.user not in reported_user_profile.reported_by.all():
+        reported_user_profile.add(request.user)
+    else:
+        reported_user_profile.remove(request.user)
+        
+    reported_user_profile.save()
+        
+    return Response()
+        
+             
+# @api_view(['POST',])
+# @permission_classes([IsAuthenticated,])
+# def send_follow_request_to_user(request, username=None):
+#     """ Here *username* is requested user's *username* """
+    
+#     user = request.user
+#     self_profile = request.user.user_profile
+#     try:
+#         user_to_reuqest_follow_profile = UserProfile.objects.get(user__username=username)
+#     except Exception as e:
+#         print(e) 
+#     if request.user.is_authenticated:
+#         if request.user == user_to_reuqest_follow_profile.user:
+#             raise Http404('You cant folllow you!')
+#         if user in user_to_reuqest_follow_profile.followers.all():
+#             user_to_reuqest_follow_profile.followers.remove(user)
+#             user_to_reuqest_follow_profile.followers_count -= 1
+#             user_to_reuqest_follow_profile.save()
+#             added = False
+#         else:
+#             user_to_reuqest_follow_profile.followers.add(user)
+#             user_to_reuqest_follow_profile.followers_count += 1
+#             user_to_reuqest_follow_profile.save()
+#             added = True
+    
+    
+#     serializer = UserProfileSerializer(self_profile, many=False)
+#     return Response(serializer.data)
+
+
 # class VerifyAccount(APIView):
     # serializer_class = UserProfile
     # permission_classes = [IsOwnerOrReadOnly]

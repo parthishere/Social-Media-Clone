@@ -101,6 +101,8 @@ class UserProfile(models.Model):
     profile_img = models.ImageField(upload_to='user/profiles',  blank=True, null=True)
     post_count = models.IntegerField(default=0)
     followers = models.ManyToManyField(User, related_name='following', blank=True)
+    follow_requests = models.ManyToManyField(User, related_name='follow_requested', blank=True)
+    blocked_users = models.ManyToManyField(User, related_name='blocked_user_profile', blank=True)
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
     created = models.BooleanField(default=False)
@@ -110,6 +112,9 @@ class UserProfile(models.Model):
     active = models.BooleanField(default=True)  # we are gonna use it as archive account 
     email_verified = models.BooleanField(default=False)
     saved_posts = models.ManyToManyField('post.Post', blank=True)
+    reported_by = models.ManyToManyField(User, related_name='reported_accounts', blank=True)
+    report_count = models.IntegerField(default=0)
+    viewed_by = models.ManyToManyField(User, related_name='viewed', blank=True)
     
     objects = UserProfileManager()
     

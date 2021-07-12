@@ -135,3 +135,40 @@ def follow_unfollow_requested_user(request, username=None):
         requested_user_profile.save()
         
     return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))
+
+
+def follow_unfollow_requested_user(request, username=None):
+    user= request.user
+    user_profile = user.user_profile
+
+    requested_user_profile = UserProfile.objects.get(user__username=username)
+    requested_user = requested_user_profile.user
+
+    
+    if user not in requested_user_profile.followers.all():
+        requested_user_profile.followers.add(user)
+        # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
+        requested_user_profile.save()
+    else:
+        requested_user_profile.followers.remove(user)
+        requested_user_profile.save()
+        
+    return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))
+
+# def report_account(request, username=None):
+#     user= request.user
+#     user_profile = user.user_profile
+
+#     requested_user_profile = UserProfile.objects.get(user__username=username)
+#     requested_user = requested_user_profile.user
+
+    
+#     if user not in requested_user_profile.reported_by.all():
+#         requested_user_profile.followers.add(user)
+#         # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
+#         requested_user_profile.save()
+#     else:
+#         requested_user_profile.followers.remove(user)
+#         requested_user_profile.save()
+        
+#     return redirect(reverse('accounts:profile', kwargs={'username':user_profile.username}))
