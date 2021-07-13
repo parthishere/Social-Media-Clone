@@ -35,11 +35,12 @@ class PostUpdateView(UpdateView):
     form_class = PostForm
     queryset = Post.objects.all()
     template_name = 'post/post_form.html'
+    slug_field = 'pk'
+    lookup_field = ['pk',]
     
     def form_valid(self, form):
-        form = super().form_valid(form)
-        instance = form.save()
-        instance.user = self.request.user
+        form.instance.user = self.request.user
+        return super().form_valid(form)
      
         
 class PostCreateView(UpdateView):
@@ -47,12 +48,12 @@ class PostCreateView(UpdateView):
     form_class = PostForm
     queryset = Post.objects.all()
     template_name = 'post/post_form.html'
+    slug_field = 'pk'
+    lookup_field = ['pk',]
     
     def form_valid(self, form):
-        form = super().form_valid(form)
-        instance = form.save()
-        instance.user = self.request.user
-        return form
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-def post_save(request):
+def save_post_view(request, pk=None):
     return render(request, '', context={})
