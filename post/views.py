@@ -13,7 +13,7 @@ class PostListView(ListView):
     queryset = Post.objects.all()
     model = Post
     template_name = 'post/post_list.html'
-   
+    
     
 def like_post_view(request):
     pk = request.data.get('post_pk')
