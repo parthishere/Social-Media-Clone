@@ -10,8 +10,7 @@ from .views import (
 app_name = 'post'
 
 urlpatterns = [
-    # path('api/', include('post.api.urls')),
-    path('', PostListView.is_view(), name='list'),
-    path('<int:pk>/update', PostUpdateView.is_view(), name='update'),
+    path('', PostListView.as_view(), name='list'),
+    path('<int:pk>/update', PostUpdateView.as_view(), name='update'),
     path('like/', like_post_view, name='like'),
 ]

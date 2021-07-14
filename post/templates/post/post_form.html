@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+{% block title_block %}{% endblock %}
+
+{% block body_block %}
+
+<form method="POST" action="{% url 'post:update' %}">
+{{ form.as_p }}
+{% csrf_token %}
+<input type='submit' value='submit' name='submit'>
+</form>
+
+{% endblock %}

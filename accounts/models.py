@@ -114,7 +114,7 @@ class UserProfile(models.Model):
     saved_posts = models.ManyToManyField('post.Post', blank=True)
     reported_by = models.ManyToManyField(User, related_name='reported_accounts', blank=True)
     report_count = models.IntegerField(default=0)
-    viewed_by = models.ManyToManyField(User, related_name='viewed', blank=True)
+    
     
     objects = UserProfileManager()
     

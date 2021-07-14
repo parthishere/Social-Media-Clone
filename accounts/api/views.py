@@ -248,6 +248,23 @@ def report_account(request, username=None):
     reported_user_profile.save()
         
     return Response()
+
+
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])
+def accept_follow_request(request, username=None):
+    user = request.user
+    requested_user_profile = UserProfile.objects.get(username=username)
+    if request.user in requested_user_profile.followers.all():
+        if user in requested_user_profile.follow_requests.all():
+            requested_user_profile.follow_requests.remove(user)
+        else:
+            pass
+    elif user in requested_user_profile.follow_requests.all():
+        requested_user_profile.followers.add(user)
+        requested_user_profile.follow_requests.remove(user)
+        
+    return Response()
         
              
 # @api_view(['POST',])
@@ -266,12 +283,10 @@ def report_account(request, username=None):
 #             raise Http404('You cant folllow you!')
 #         if user in user_to_reuqest_follow_profile.followers.all():
 #             user_to_reuqest_follow_profile.followers.remove(user)
-#             user_to_reuqest_follow_profile.followers_count -= 1
 #             user_to_reuqest_follow_profile.save()
 #             added = False
 #         else:
 #             user_to_reuqest_follow_profile.followers.add(user)
-#             user_to_reuqest_follow_profile.followers_count += 1
 #             user_to_reuqest_follow_profile.save()
 #             added = True
     

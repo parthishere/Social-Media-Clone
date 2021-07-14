@@ -2,6 +2,7 @@ from django.shortcuts import render, reverse, redirect
 
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.contrib.auth.decorators import permission_required, login_required
 
 from .models import Post
 from .forms import PostForm
@@ -27,7 +28,7 @@ def like_post_view(request):
                 post.like_count = post.liked_user.all().count()
             post.save()
             return redirect('post:list')
-    return render(request, "", context={})
+    return render(request, "post_list.html", context={'post':post, 'pk':pk})
     
     
 class PostUpdateView(UpdateView):
@@ -55,5 +56,27 @@ class PostCreateView(UpdateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
+@login_required
 def save_post_view(request, pk=None):
-    return render(request, '', context={})
+    post = Post.objects.get(pk=pk)
+    user_profile=request.user.user_profile
+
+    if post in user_profile.saved_posts.all():
+        user_profile.saved_posts.remove(post)
+    else:
+        user_profile.saved_posts.add(post)
+
+    user_profile.save()
+    return redirect('post:list')
+
+@login_required
+def saved_posts_list_view(request):
+    user = request.user
+    user_profile = user.user_profile
+    context = {}
+
+    post_list = user_profile.saved_posts.all()
+    
+    context['objects_list'] = post_list
+    return render(request, 'post_list.html', context=context)
