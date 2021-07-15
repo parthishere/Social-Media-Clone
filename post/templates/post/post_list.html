@@ -16,7 +16,11 @@
         <!-- Start: 1 Row 3 Columns -->
         <div class="container">
             <div class="row">
-                <a href="{% url 'post:like' %}"><div class="col-md-4"><button class="btn btn-primary" type="button">like</button></a>
+                <form method='POST' action="{% url 'post:like' %}">
+                <input type='hidden' value="{{ obj.pk }}" name='post_pk'>
+                {% csrf_token %}
+                <div class="col-md-4"><button class="btn btn-primary" type="submit">like</button>
+                </form> {{ obj.like_count }}
                 <button class="btn btn-primary" type="button">comment</button></div>
                 <div class="col-md-4"><button class="btn btn-primary" type="button">save</button></div>
                 <div class="col-md-4"><button class="btn btn-primary" type="button">share</button></div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from image_cropping import ImageRatioField
 import uuid
 
 
@@ -26,8 +27,10 @@ class PostManager(models.Manager):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_user')
     image = models.ImageField(upload_to='post/images')
+     # size is "width x height"
+    cropping = ImageRatioField('image', '430x360')
     caption = models.TextField(default='feeling good ✔🎶')
-    likes = models.ForeignKey(User, related_name='liked_user', on_delete=models.CASCADE, null=True, blank=True)
+    likes = models.ManyToManyField(User, related_name='liked_user', blank=True)
     like_count = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
     

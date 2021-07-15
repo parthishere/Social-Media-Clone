@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'easy_thumbnails',
+    'image_cropping',
     # 'channels',
     
     'allauth',
@@ -203,4 +205,10 @@ LOGIN_REDIRECT_URL = 'api/users/update-profile/'
 
 # ASGI_APPLICATION = 'social_app.routing.application'
 
+from easy_thumbnails.conf import Settings as thumbnail_settings
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
+IMAGE_CROPPING_BACKEND = 'image_cropping.backends.easy_thumbs.EasyThumbnailsBackend'
+IMAGE_CROPPING_BACKEND_PARAMS = {}

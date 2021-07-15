@@ -19,7 +19,7 @@ NOTIFICATION_CHOICES = (
 
 
 class Notification(models.Model):
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_user')
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_user', null=True, blank=True)
     to_user = models.ForeignKey(User,  on_delete=models.CASCADE, related_name='notification_to_user', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     notification_type = models.CharField(max_length=10)
