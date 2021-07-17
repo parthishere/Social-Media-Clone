@@ -21,7 +21,7 @@
                 {% csrf_token %}
                 <div class="col-md-4"><button class="btn btn-primary" type="submit">like</button>
                 </form> {{ obj.like_count }}
-                <button class="btn btn-primary" type="button">comment</button></div>
+                <a href="{% url 'comment' %}"><button class="btn btn-primary" type="button">comment</button></div>
                 <div class="col-md-4"><button class="btn btn-primary" type="button">save</button></div>
                 <div class="col-md-4"><button class="btn btn-primary" type="button">share</button></div>
             </div>

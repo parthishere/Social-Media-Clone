@@ -106,7 +106,7 @@ def saved_posts_list_view(request):
     user_profile = user.user_profile
     saved_post = user_profile.saved_posts.all()
     context = {}
-    context['object_list']
+    context['object_list'] = saved_post
 
     post_list = user_profile.saved_posts.all()
     
