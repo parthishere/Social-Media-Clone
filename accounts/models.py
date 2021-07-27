@@ -100,6 +100,7 @@ class UserProfile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     profile_img = models.ImageField(upload_to='user/profiles',  blank=True, null=True)
     post_count = models.IntegerField(default=0)
+    private_account = models.BooleanField(default=False)
     followers = models.ManyToManyField(User, related_name='following', blank=True)
     follow_requests = models.ManyToManyField(User, related_name='follow_requested', blank=True)
     blocked_users = models.ManyToManyField(User, related_name='blocked_user_profile', blank=True)
@@ -143,9 +144,11 @@ class UserProfile(models.Model):
     #     else:
     #         return False
         
+    @property
     def return_skills(self):
         return self.skill
     
+    @property
     def return_topic(self):
         return self.topic
     
@@ -170,6 +173,9 @@ class UserProfile(models.Model):
         liked_posts = self.user.liked_user
         return liked_posts
     
+    @property
+    def account_type(self):
+        return self.private_account
     def get_api_url(self, request=None):
         return api_reverse('account-api:profile-detail', kwargs={"username": self.user.username}, request=request)
         
