@@ -17,6 +17,11 @@ from .views import (
     # verify_account,
     remove_user_from_followers,
     recommended_user,
+    accept_follow_request,
+    decline_follow_request,
+    change_to_open_account_view,
+    change_to_private_account_view,
+    
 
 )
 
@@ -38,6 +43,10 @@ urlpatterns = [
     path('delete-profile/', delete_my_account, name='delete-profile'),
     path('intrests/update', update_interests, name='update-intrest'),
     path('recommended-users/', recommended_user, name='recommended-user'),
+    path('accept-follow-request/<str:username>', accept_follow_request, name='accept_follow_request'),
+    path('decline-follow-request/', decline_follow_request, name='decline_follow_request'),
+    path('change-profile-to-open/', change_to_open_account_view, name='change_to_open_account'),
+    path('change-profile-to-private/', change_to_private_account_view, name='change_to_private_account'),
     # path('verify/', verify_account, name='verify-account'),
     # path('/', ProfileListAPIView.as_view(), name='profile_list'),
     # path('list/', ProfileListAPIView.as_view(), name='profile_list'),

@@ -22,7 +22,7 @@ from accounts.api.serializers import UserSerilizer
 class PostListAPIView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     search_fields = ['user__username', 'user__first_name', 'timestamp']
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     ordering_fields = '__all__'
@@ -34,6 +34,11 @@ class PostCreate(generics.CreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     parser_classes = [parsers.FileUploadParser]
+    
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        return Response(serializer.data)
     
     def get_serializer_context(self, *args, **kwargs):
         return { 'request': self.request }
@@ -52,6 +57,7 @@ class DeletePost(generics.DestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
     lookup_field = ['pk']
+    
     
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -95,9 +101,16 @@ def see_following_users_post(request, id=None): # feed
 
 
 @api_view(['GET'])
-def user_posts(request, id=None):
-    user_profile = UserProfile.objects.get(id=id) 
-    posts = user_profile.user.post_user or None
+def user_posts(request, username=None):
+    user_profile = UserProfile.objects.get(username=username) 
+    posts = None
+    if request.user.is_authenticated:
+        if (request.user == user_profile.user) or (request.user in user_profile.followers.all()):
+            posts = user_profile.user.post_user or None
+        else:
+            None
+    else:
+        pass
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
