@@ -32,3 +32,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         return obj.get_api_url(request=self.context.get('request'))
     
+    

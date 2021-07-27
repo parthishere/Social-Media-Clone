@@ -134,6 +134,10 @@ def follow_requested_user(request, username=None):
             user_to_follow_profile.followers_count -= 1
             user_to_follow_profile.save()
             added = False
+        elif user_to_follow_profile.private_account:
+            user_to_follow_profile.followers_requests.add(user)
+            user_to_follow_profile.save()
+            added = False
         else:
             user_to_follow_profile.followers.add(user)
             user_to_follow_profile.followers_count += 1
@@ -171,9 +175,15 @@ def get_requested_user_following(request, username=None):
     """ using Reverse Queryset """
     requested_user = UserProfile.objects.get(user__username=username, active=True).user
     if requested_user is not None:
-        following = requested_user.following
-        serializer = UserProfileSerializer(following, many=True)
-        return Response(serializer.data)
+        if requested_user.private_account:
+            if request.user in requested_user.followers.all():
+                following = requested_user.following
+                serializer = UserProfileSerializer(following, many=True)
+                return Response(serializer.data)
+            else:
+                Response({'detail':'user profile is private'}, status=status.HTTP_404_NOT_FOUND)
+  
+            
     else:
         return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)
   
@@ -183,11 +193,16 @@ def get_requested_user_following(request, username=None):
 def get_requested_user_followers(request, username=None):
     requested_user_profile = UserProfile.objects.get(user__username=username, active=True)
     if requested_user_profile is not None:
-        followers = requested_user_profile.followers
-        serializer = UserSerilizer(followers, many=True)
-        return Response(serializer.data)
+        if requested_user_profile.private_account:
+            if request.user in requested_user_profile.followers.all():
+                followers = requested_user_profile.followers
+                serializer = UserSerilizer(followers, many=True)
+                return Response(serializer.data)
+            else:
+                Response({'detail':'user profile is private'}, status=status.HTTP_404_NOT_FOUND)
     else:
         return Response({'detail':'no user profile found'}, status=status.HTTP_404_NOT_FOUND)
+    
     
 @api_view(['POST',])
 @permission_classes([IsOwnerOrReadOnly,])
@@ -255,44 +270,66 @@ def report_account(request, username=None):
 def accept_follow_request(request, username=None):
     user = request.user
     requested_user_profile = UserProfile.objects.get(username=username)
+    if requested_user_profile.private_account:
+        if request.user in requested_user_profile.followers.all():
+            if user in requested_user_profile.follow_requests.all():
+                requested_user_profile.follow_requests.remove(user)
+            else:
+                pass
+        elif user in requested_user_profile.follow_requests.all():
+            requested_user_profile.followers.add(user)
+            requested_user_profile.follow_requests.remove(user)
+            
+        return Response()
+    else:
+        return Response({"detail":"You can not accept follow request if you dont have private account"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])
+def decline_follow_request(request, username=None):
+    user = request.user
+    requested_user_profile = UserProfile.objects.get(username=username)
     if request.user in requested_user_profile.followers.all():
         if user in requested_user_profile.follow_requests.all():
             requested_user_profile.follow_requests.remove(user)
         else:
             pass
     elif user in requested_user_profile.follow_requests.all():
-        requested_user_profile.followers.add(user)
         requested_user_profile.follow_requests.remove(user)
         
     return Response()
+ 
+
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])       
+def change_to_private_account_view(request):
+    user=request.user
+    user_profile = user.user_profile
+    if user_profile.private_account:
+        user_profile.private_account = True
+        user_profile.save()
+        return Response({"detail": "Changed to Private account"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"detail": "already private"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-             
-# @api_view(['POST',])
-# @permission_classes([IsAuthenticated,])
-# def send_follow_request_to_user(request, username=None):
-#     """ Here *username* is requested user's *username* """
-    
-#     user = request.user
-#     self_profile = request.user.user_profile
-#     try:
-#         user_to_reuqest_follow_profile = UserProfile.objects.get(user__username=username)
-#     except Exception as e:
-#         print(e) 
-#     if request.user.is_authenticated:
-#         if request.user == user_to_reuqest_follow_profile.user:
-#             raise Http404('You cant folllow you!')
-#         if user in user_to_reuqest_follow_profile.followers.all():
-#             user_to_reuqest_follow_profile.followers.remove(user)
-#             user_to_reuqest_follow_profile.save()
-#             added = False
-#         else:
-#             user_to_reuqest_follow_profile.followers.add(user)
-#             user_to_reuqest_follow_profile.save()
-#             added = True
-    
-    
-#     serializer = UserProfileSerializer(self_profile, many=False)
-#     return Response(serializer.data)
+
+@api_view(['POST',])
+@permission_classes([IsAuthenticated,])
+def change_to_open_account_view(request):
+    user=request.user
+    user_profile = user.user_profile
+    if not user_profile.private_account:
+        try:
+            user_profile.followers.add(
+                user for user in user_profile.followers_requests.all() 
+            )
+        except Exception as e:
+            print(e)
+        user_profile.save()
+        return Response({"detail": "Changed to Open account"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"detail": "already open"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 # class VerifyAccount(APIView):

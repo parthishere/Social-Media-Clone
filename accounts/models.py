@@ -102,7 +102,7 @@ class UserProfile(models.Model):
     post_count = models.IntegerField(default=0)
     private_account = models.BooleanField(default=False)
     followers = models.ManyToManyField(User, related_name='following', blank=True)
-    follow_requests = models.ManyToManyField(User, related_name='follow_requested', blank=True)
+    followers_requests = models.ManyToManyField(User, related_name='follow_requested', blank=True)
     blocked_users = models.ManyToManyField(User, related_name='blocked_user_profile', blank=True)
     followers_count = models.IntegerField(default=0)
     following_count = models.IntegerField(default=0)
@@ -176,6 +176,8 @@ class UserProfile(models.Model):
     @property
     def account_type(self):
         return self.private_account
+    
+    
     def get_api_url(self, request=None):
         return api_reverse('account-api:profile-detail', kwargs={"username": self.user.username}, request=request)
         
