@@ -15,6 +15,7 @@
             <h1>{{ obj.user.username }}</h1>
             <p>{{ obj.bio }}</p>
         </div>
+        <a href="{% url 'accounts:remove-followe' username=obj.user.username %}"><button class='btn btn-danger'>Unfollow</button></a>
     </div></a>
     <hr>
     {% endfor %}
