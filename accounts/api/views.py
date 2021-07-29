@@ -330,6 +330,20 @@ def change_to_open_account_view(request):
         return Response({"detail": "Changed to Open account"}, status=status.HTTP_200_OK)
     else:
         return Response({"detail": "already open"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    
+class UserProfileFollowerRequestsListAPI(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny,]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['user__username', 'user__first_name', 'bio', 'name', 'intrest']
+    ordering_fields = '__all__'
+
+    def get_queryset(self):
+        pass
+    
+    def get_serializer_context(self, *args, **kwargs):
+        return { "request":self.request }
 
 
 # class VerifyAccount(APIView):

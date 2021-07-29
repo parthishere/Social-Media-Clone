@@ -21,7 +21,13 @@ class UserProfileDetailView(View):
         user = user_profile.user
         context['user'] = user
         context['user_profile'] = user_profile
-        context['posts'] = user.post_user.all()
+        if request.user.is_authenticated and user_profile.private_account:
+            if request.user in user_profile.followers.all():
+                context['posts'] = user.post_user.all()
+            else:
+                context['posts'] = None
+        elif not request.user.is_authenticated and user_profile.private_account:
+            context['posts'] = None
         return render(request, self.template_name, context=context)
         
         
@@ -65,13 +71,14 @@ class UpdateUserProfile(LoginRequiredMixin, UpdateView):
     # def form_validate(self, form):
     #     if form.instance.email is not None:
             
-    
     def get_success_url(self):
         next_url = self.request.data.get('next_url')
         if next_url is not None:
             return reverse(next_url)
         else: 
             return self.success_url
+        
+        
         
 def user_profile_update(request, username=None):
     user_profile = UserProfile.objects.get(user__username=username)
@@ -89,6 +96,8 @@ def user_profile_update(request, username=None):
         context['form'] = form
 
     return render(request, 'accounts/update_profile_form.html', context=context)
+    
+    
     
 def user_followers_list(request, username=None):
     user_profile = UserProfile.objects.get(user__username=username)
@@ -118,42 +127,112 @@ def user_following_list(request, username=None):
     return render(request, 'accounts/following_list.html', context=context)
 
 
+
 def follow_unfollow_requested_user(request, username=None):
-    user= request.user
-    user_profile = user.user_profile
+    if request.user.is_authenticated:
+        user= request.user
+        user_profile = user.user_profile
 
-    requested_user_profile = UserProfile.objects.get(user__username=username)
-    requested_user = requested_user_profile.user
+        requested_user_profile = UserProfile.objects.get(user__username=username)
+        requested_user = requested_user_profile.user
 
-    
-    if user not in requested_user_profile.followers.all():
-        requested_user_profile.followers.add(user)
-        # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
-        requested_user_profile.save()
-    else:
-        requested_user_profile.followers.remove(user)
-        requested_user_profile.save()
-        
+        if requested_user_profile.private_account:
+            if user in requested_user_profile.followers.all():
+                requested_user_profile.followers.remove(user)
+                if user in requested_user_profile.followers_requests.all():
+                    requested_user_profile.followers_requests.remove(user)
+            else:
+                requested_user_profile.followers_requests.add(user)
+                
+        else:
+            if user not in requested_user_profile.followers.all():
+                requested_user_profile.followers.add(user)
+                # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
+                
+            else:
+                requested_user_profile.followers.remove(user)
+               
+        requested_user_profile.save()     
     return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))
 
 
-def follow_unfollow_requested_user(request, username=None):
-    user= request.user
-    user_profile = user.user_profile
 
-    requested_user_profile = UserProfile.objects.get(user__username=username)
-    requested_user = requested_user_profile.user
+def follow_requested_user_list(request):
+    if request.user.is_authenticated:
+        user = request.user
+        user_profile = user.user_profile
+
+        context = {}
+        if user_profile.private_account:
+            context['objects_list'] = user_profile.followers_requests.all()
+        else:
+            context = {}
+            
+        return render(request, 'accounts/user_list.html', context=context)
+    
+    
+def accept_follow_request_view(request, username=None):
+    if request.user.is_authenticated:
+        user = request.user
+        user_profile = user.user_profile
+        
+        requested_follower_profile = UserProfile.objects.get(username=username)
+        requested_follower = requested_follower_profile.user
+
+        if requested_follower in user_profile.followers.all():
+            if requested_follower in user_profile.followers_requests.all():
+                user_profile.followers_requests.remove(requested_follower)
+        elif requested_follower in user_profile.followers_requests.all():
+            user_profile.followers_requests.remove(requested_follower)
+            user_profile.followers.add(requested_follower)
+            
+        user_profile.save()
+        return redirect(reverse('accounts:follow-requests-list'))
+    else:
+        return redirect('login')
+   
+def decline_follow_request_view(request, username=None):
+    if request.user.is_authenticated:
+        user = request.user
+        user_profile = user.user_profile
+        
+        requested_follower_profile = UserProfile.objects.get(username=username)
+        requested_follower = requested_follower_profile.user
+
+        if requested_follower in user_profile.followers.all():
+            if requested_follower in user_profile.followers_requests.all():
+                user_profile.followers_requests.remove(requested_follower)
+        elif requested_follower in user_profile.followers_requests.all():
+            user_profile.followers_requests.remove(requested_follower)
+            
+        user_profile.save()
+        return redirect(reverse('accounts:followers-requests'))
+    else:
+        return redirect('login') 
+
+
+def change_profile_type_view(request):
+    if request.user.is_authenticated:
+        pass
+
+
+# def follow_unfollow_requested_user(request, username=None):
+#     user= request.user
+#     user_profile = user.user_profile
+
+#     requested_user_profile = UserProfile.objects.get(user__username=username)
+#     requested_user = requested_user_profile.user
 
     
-    if user not in requested_user_profile.followers.all():
-        requested_user_profile.followers.add(user)
-        # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
-        requested_user_profile.save()
-    else:
-        requested_user_profile.followers.remove(user)
-        requested_user_profile.save()
+#     if user not in requested_user_profile.followers.all():
+#         requested_user_profile.followers.add(user)
+#         # requested_user_profile.followers_count = requested_user_profile.followers.all().count()
+#         requested_user_profile.save()
+#     else:
+#         requested_user_profile.followers.remove(user)
+#         requested_user_profile.save()
         
-    return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))
+#     return redirect(reverse('accounts:profile', kwargs={'username':requested_user.username}))
 
 # def report_account(request, username=None):
 #     user= request.user

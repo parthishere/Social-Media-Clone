@@ -41,6 +41,8 @@
                     {% if request.user == user %}
                     {% elif request.user in user_profile.followers.all %}
                     <input type='submit' class="btn btn-light text-center border rounded-pill border-primary shadow-lg" style="margin: 10px;" value='Unfollow'></input>
+                    {% elif request.user in user_profile.followers_requests.all %}
+                    <input type='submit' class="btn btn-light text-center border rounded-pill border-primary shadow-lg" style="margin: 10px;" value='Requested'></input>
                     {% else %}
                     <input type='submit' class="btn btn-light text-center border rounded-pill border-primary shadow-lg" style="margin: 10px;" value='Follow'></input>
                     {% endif %}
@@ -53,35 +55,15 @@
                 </div>
             </div>
         </div><!-- End: 1 Row 2 Columns -->
-        <div class="container">
-            <!-- Start: Intro -->
-            <div class="intro">
-                <h2 class="text-center">Lightbox Gallery</h2>
-            </div><!-- End: Intro -->
-            <div>
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-bs-toggle="tab" href="#tab-1">About</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-2">Followers</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-3">Tab 3</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" role="tabpanel" id="tab-1">
-                        <!-- Start: Photos -->
-                        <div class="row photos" data-bss-baguettebox="">
-                        {% for post in posts %}
-                            <div class="col-sm-6 col-md-4 col-lg-3 item"><a href="{{ post.image.url }}"><img class="img-fluid" src="{{ post.image.url }}"></a><button class="btn btn-primary" type="button">Button</button></div>
-                            {% endfor %}
-                        </div><!-- End: Photos -->
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="tab-2">
-                        <p>Content for tab 2.</p>
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="tab-3">
-                        <p>Content for tab 3.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% if user_profile.private_account %}
+            {% if request.user == user_profile.user or request.user in user_profile.followers.all %}
+                {% include 'snippets/posts.html' with post=post %}
+            {% else %}
+            follow to see post
+            {% endif %}
+        {% else %}
+            {% include 'snippets/posts.html' with post=post %}
+        {% endif %}
     </section><!-- End: Lightbox Gallery -->
     {% comment %} <script src="{% static '/assets/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
