@@ -14,24 +14,24 @@ class CommentListView(View):
     pass
     
     
-# def like_post_view(request):
-#     context = {}
-#     if request.POST:
-#         pk = request.POST.get('post_pk')
-#         post = Comment.objects.get(pk=pk)
-#         context['post'] = post
-#         context['pk'] = pk
-#         if post is not None and pk is not None:
-#             if request.POST:
-#                 if request.user in post.likes.all():
-#                     post.likes.remove(request.user)
-#                     post.like_count = post.likes.all().count()
-#                 else:
-#                     post.likes.add(request.user)
-#                     post.like_count = post.likes.all().count()
-#                 post.save()
-#                 return redirect('post:list')
-#     return render(request, "post/post_list.html", context=context)
+def like_comment_view(request):
+    context = {}
+    if request.POST:
+        pk = request.POST.get('post_pk')
+        post = Comment.objects.get(pk=pk)
+        context['post'] = post
+        context['pk'] = pk
+        if post is not None and pk is not None:
+            if request.POST:
+                if request.user in post.likes.all():
+                    post.likes.remove(request.user)
+                    post.like_count = post.likes.all().count()
+                else:
+                    post.likes.add(request.user)
+                    post.like_count = post.likes.all().count()
+                post.save()
+                return redirect('post:list')
+    return render(request, "post/post_list.html", context=context)
     
     
 # class CommentUpdateView(UpdateView):
@@ -80,7 +80,7 @@ class CommentCreateView(CreateView):
         return context
 
 
-class DeletePostView(DeleteView):
+class DeleteCommentView(DeleteView):
     model = Comment
     queryset = Comment.objects.all()
     success_url = reverse_lazy('post:list')

@@ -10,6 +10,8 @@ from .models import Post
 from .forms import PostForm
 
 # Create your views here.
+class PostDetailView(View):
+    pass
 
 class PostListView(ListView):
     queryset = Post.objects.all()

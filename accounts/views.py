@@ -136,6 +136,7 @@ def remove_follower_view(request, username=None):
     
     if remove_user_profile.user in user_profile.followers.all():
         user_profile.followers.remove(remove_user_profile.user)
+        
         print('working')
 
     else:
