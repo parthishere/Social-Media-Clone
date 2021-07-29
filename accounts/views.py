@@ -134,11 +134,12 @@ def remove_follower_view(request, username=None):
     
     remove_user_profile = UserProfile.objects.get(user__username=username)
     
-    if remove_user_profile in user_profile.followers.all():
+    if remove_user_profile.user in user_profile.followers.all():
         user_profile.followers.remove(remove_user_profile.user)
+        print('working')
 
     else:
-        pass
+        print('not workking')
     
     user_profile.save()
     return redirect(reverse('accounts:user-followers', kwargs={"username":user.username}))
@@ -150,7 +151,7 @@ def remove_following_view(request, username=None):
     
     unfollow_user_profile = UserProfile.objects.get(user__username=username)
     
-    if user_profile in unfollow_user_profile.followers.all():
+    if user_profile.user in unfollow_user_profile.followers.all():
         unfollow_user_profile.followers.remove(user)
     else:
         pass
