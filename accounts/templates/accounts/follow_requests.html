@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+
+{% block title_block %}List{% endblock %}
+
+
+{% block body_block %}
+{% for object in objects_list %}
+    <hr><a href="{% url 'accounts:profile' username=object.username %}">
+    {% if object.user_profile.profile_img %}
+    <div class="container border-dark shadow-lg d-xxl-flex justify-content-xxl-start align-items-xxl-center" style="width: 1000px;"><img class="border rounded-circle" src="{{ object.user_profile.profile_img.url }}" style="width: 150px;height: 150px;">
+    {% endif %}
+        <div class="col">
+            <h1>{{ object.username }}</h1>
+            <p>{{ object.user_profile.bio }}</p>
+        </div>
+        <a href="{% url 'accounts:accept-request' username=object.username %}"><button class='btn btn-dark'>Accept</button></a>
+        <a href="{% url 'accounts:decline-request' username=object.username %}"><button class='btn btn-danger'>Decline</button></a>
+    </div>
+    <hr>
+    {% endfor %}
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    
+    <script src="/assets/js/Lightbox-Gallery.js"></script>
+{% endblock %}

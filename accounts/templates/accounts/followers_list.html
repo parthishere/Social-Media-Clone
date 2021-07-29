@@ -14,10 +14,13 @@
         <div class="col">
             <h1>{{ obj.username }}</h1>
             <p>{{ obj.user_profile.bio }}</p>
+            
         </div>
+        <a href="{% url 'accounts:remove-follower' username=obj.username %}"><button class='btn btn-danger'>Remove Follower</button></a>
     </div>
     </a>
     <hr>
+ 
     {% endfor %}
 
 

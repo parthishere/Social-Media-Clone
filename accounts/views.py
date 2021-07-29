@@ -128,6 +128,38 @@ def user_following_list(request, username=None):
 
 
 
+def remove_follower_view(request, username=None):
+    user = request.user
+    user_profile = user.user_profile
+    
+    remove_user_profile = UserProfile.objects.get(user__username=username)
+    
+    if remove_user_profile in user_profile.followers.all():
+        user_profile.followers.remove(remove_user_profile.user)
+
+    else:
+        pass
+    
+    user_profile.save()
+    return redirect(reverse('accounts:user-followers', kwargs={"username":user.username}))
+
+
+def remove_following_view(request, username=None):
+    user = request.user
+    user_profile = user.user_profile
+    
+    unfollow_user_profile = UserProfile.objects.get(user__username=username)
+    
+    if user_profile in unfollow_user_profile.followers.all():
+        unfollow_user_profile.followers.remove(user)
+    else:
+        pass
+    
+    user_profile.save()
+    return redirect(reverse('accounts:profile', kwargs={"username":unfollow_user_profile.user.username}))
+
+
+
 def follow_unfollow_requested_user(request, username=None):
     if request.user.is_authenticated:
         user= request.user
@@ -168,7 +200,9 @@ def follow_requested_user_list(request):
         else:
             context = {}
             
-        return render(request, 'accounts/user_list.html', context=context)
+        
+            
+        return render(request, 'accounts/follow_requests.html', context=context)
     
     
 def accept_follow_request_view(request, username=None):
@@ -176,7 +210,7 @@ def accept_follow_request_view(request, username=None):
         user = request.user
         user_profile = user.user_profile
         
-        requested_follower_profile = UserProfile.objects.get(username=username)
+        requested_follower_profile = UserProfile.objects.get(user__username=username)
         requested_follower = requested_follower_profile.user
 
         if requested_follower in user_profile.followers.all():
@@ -187,7 +221,7 @@ def accept_follow_request_view(request, username=None):
             user_profile.followers.add(requested_follower)
             
         user_profile.save()
-        return redirect(reverse('accounts:follow-requests-list'))
+        return redirect(reverse('accounts:followers-requests'))
     else:
         return redirect('login')
    
@@ -196,7 +230,7 @@ def decline_follow_request_view(request, username=None):
         user = request.user
         user_profile = user.user_profile
         
-        requested_follower_profile = UserProfile.objects.get(username=username)
+        requested_follower_profile = UserProfile.objects.get(user__username=username)
         requested_follower = requested_follower_profile.user
 
         if requested_follower in user_profile.followers.all():
