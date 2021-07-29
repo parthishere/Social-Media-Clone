@@ -213,7 +213,21 @@ def decline_follow_request_view(request, username=None):
 
 def change_profile_type_view(request):
     if request.user.is_authenticated:
-        pass
+        user = request.user
+        user_profile = user.user_profile 
+        
+        if user_profile.private_account:
+            user_profile.private_account = False
+            user_profile.followers.add(
+                user for user in user_profile.followers_requests.all()
+            )
+            user_profile.followers_requests.clear()
+            user_profile.save()
+        else:
+            user_profile.private_account = True        
+            
+        user_profile.save()
+        return redirect(reverse('accounts:profile', kwargs={'username':user.username}))   
 
 
 # def follow_unfollow_requested_user(request, username=None):
