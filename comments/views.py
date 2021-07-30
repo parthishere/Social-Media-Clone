@@ -11,7 +11,7 @@ from .forms import CommentForm
 
 # Create your views here.
 class CommentListView(View):
-    pass
+    pass    
     
     
 def like_comment_view(request):

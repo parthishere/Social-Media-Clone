@@ -8,6 +8,7 @@ from .views import (
     save_post_view,
     saved_posts_list_view,
     DeletePostView,
+    LikedUserListView
 )
 
 app_name = 'post'
@@ -19,5 +20,6 @@ urlpatterns = [
     path('<int:pk>/delete', DeletePostView.as_view(), name='delete'),
     path('like/', like_post_view, name='like'),
     path('<int:pk>/save', save_post_view, name='save'),
+    path('<int:pk>/liked-user', LikedUserListView.as_view(), name='liked-user'),
     path('saved-list', saved_posts_list_view, name='saved-list'),
 ]

@@ -18,6 +18,11 @@ class PostListView(ListView):
     model = Post
     template_name = 'post/post_list.html'
     
+class LikedUserListView(ListView):
+    queryset = Post.objects.all()
+    model = Post
+    template_name = 'post/post_list.html'
+    
     
 def like_post_view(request):
     context = {}

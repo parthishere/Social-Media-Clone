@@ -17,12 +17,21 @@
         <div class="container">
             <div class="row">
                 <form method='POST' action="{% url 'post:like' %}">
-                <input type='hidden' value="{{ obj.pk }}" name='post_pk'>
-                {% csrf_token %}
-                <div class="col-md-4"><button class="btn btn-primary" type="submit">like</button>
+                    <input type='hidden' value="{{ obj.pk }}" name='post_pk'>
+                    {% csrf_token %}
+                    {% if request.user in obj.likes %}
+                    <div class="col-md-4"><button class="btn btn-danger" type="submit">unlike</button>
+                    {% else %}
+                    <div class="col-md-4"><button class="btn btn-primary" type="submit">like</button>
+                    {% endif %}
+                    
                 </form> {{ obj.like_count }}
-                <a href="{% url 'comment' %}"><button class="btn btn-primary" type="button">comment</button></div>
-                <div class="col-md-4"><button class="btn btn-primary" type="button">save</button></div>
+                {% comment %} <a href="{% url 'comment:create' %}"><button class="btn btn-primary" type="button">comment</button></div> {% endcomment %}
+                {% if obj in request.user.user_profile.saved_posts.all %}
+                <a href="{% url 'post:save' pk=obj.pk %}"<div class="col-md-4"><button class="btn btn-danger" type="button">unsave</button></div></a>
+                {% else %}
+                <a href="{% url 'post:save' pk=obj.pk %}"<div class="col-md-4"><button class="btn btn-primary" type="button">save</button></div></a>
+                {% endif %}
                 <div class="col-md-4"><button class="btn btn-primary" type="button">share</button></div>
             </div>
         </div><!-- End: 1 Row 3 Columns -->
