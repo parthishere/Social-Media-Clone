@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from .views import (
     PostCreateView,
+    PostDetailView,
     PostListView,
     like_post_view,
     PostUpdateView,
@@ -15,6 +16,7 @@ app_name = 'post'
 
 urlpatterns = [
     path('', PostListView.as_view(), name='list'),
+    path('<pk>', PostDetailView.as_view(), name='detail'),
     path('create/', PostCreateView.as_view(), name='create'),
     path('<int:pk>/update', PostUpdateView.as_view(), name='update'),
     path('<int:pk>/delete', DeletePostView.as_view(), name='delete'),

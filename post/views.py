@@ -5,13 +5,23 @@ from django.views import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.auth.decorators import permission_required, login_required
+from comments.models import Comment
+from comments.forms import CommentForm
 
 from .models import Post
 from .forms import PostForm
 
 # Create your views here.
 class PostDetailView(View):
-    pass
+    def get(self, pk=None):
+        context = {}
+        form = CommentForm(self.request.POST or None)
+        post= Post.objects.get(pk=pk)
+        comments = Comment.objects.filter(post=post)
+        context['post'] = post
+        context['comments'] = comments
+
+        return render(self.request, 'post/post_detail.html', context)
 
 class PostListView(ListView):
     queryset = Post.objects.all()

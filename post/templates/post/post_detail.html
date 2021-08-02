@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+{% endblock %}
+
+
+{% block body_block %}
+
+{{ post }}
+<form method='POST'>
+{% csrf_token %}
+{{ form.as_p }}
+<input type='submit' class='btn btn dark' value='submit'>
+</form>
+{% for comment in comments %}
+{{ comment }}
+{% endfor %}
+
+{% endblock %}

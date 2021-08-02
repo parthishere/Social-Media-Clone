@@ -20,12 +20,17 @@ users:
     => email verification | <post>
     => verify my account | <post> | IsAuthenticated
     => add skills or intrests | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => change user account type  | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => send follow request | <post> | IsAuthenticated
+    => accept follow request | <post> | IsAuthenticated
+    => decline follow request | <post> | IsAuthenticated
+    => see list of follow request | <get> | IsAuthenticated
     
 posts:
     => self Posts | <get> | IsAuthenticated and IsOwnerOrReadOnly
     => see users post | <get> 
     => see all posts / serach posts | <get> 
-    //# => retrive post | <get>
+    // => retrive post | <get>
     => add post | <post> | IsAuthenticated
     => edit post | <patch, put> | IsAuthenticated and IsOwnerOrReadOnly
     => delete post | <post> | IsAuthenticated and IsOwnerOrReadOnly
@@ -52,6 +57,7 @@ feed:
 Notification:
     => See All Notifications | <get> | IsAdminUser
     => Read Perticular Notification | <post> | IsAuthenticated and IsOwnerOrReadOnly
+    => see list of user's notification | <get> | IsAuthenticated
     => Make notification with signals
 
 Other Features:

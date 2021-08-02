@@ -4,7 +4,7 @@ from django import forms
 class CommentForm(forms.ModelForm):
     class Meta():
         model = Comment
-        fields = ('caption')
+        fields = '__all__'
         
         def __init__(self, *args,**kwargs):
             # user_set = kwargs.pop('user_set', None)
